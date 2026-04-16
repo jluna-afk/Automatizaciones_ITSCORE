@@ -1,5 +1,4 @@
 import unittest
-import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -7,6 +6,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+import time
+import os
 
 def find_and_send_keys(driver, by_locator, value, wait_time=50):
     element = WebDriverWait(driver, wait_time).until(
@@ -32,7 +33,7 @@ def seleccionar_opcion_ng_select(driver, texto_opcion, wait_time=10):
                 opcion.click()
                 return True
         return False
-    except Exception as e:
+    except Exception:
         return False
 
 def validar_mensaje_snackbar(driver, mensaje_exito, timeout=10):
@@ -65,29 +66,53 @@ class TestCierreDeCaja(unittest.TestCase):
     def test_cierre_de_caja(self):
         driver = self.driver
 
-        try:
-            find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
-            find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
-            print("🔵 INGRESO USUARIO Y CLAVE")
-            find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
-            print("🔵 CLICK BOTON INGRESAR")
+        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
+        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
+        print("🔵 INGRESO USUARIO Y CLAVE")
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
+        print("🔵 CLICK BOTON INGRESAR")
 
-            find_and_click(driver, (By.LINK_TEXT, "Caja"))
-            find_and_click(driver, (By.LINK_TEXT, "Puesto"))
-            print("🔵 INGRESO MODULO CAJA")
+        find_and_click(driver, (By.LINK_TEXT, "Caja"))
+        find_and_click(driver, (By.LINK_TEXT, "Puesto"))
+        print("🔵 INGRESO MODULO CAJA")
 
-            find_and_click(driver, (By.XPATH, "//button[normalize-space()='Cerrar Caja']"))
-            print("🔵 CLICK BOTON CERRAR CAJA")
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Cerrar Caja']"))
+        print("🔵 CLICK BOTON CERRAR CAJA")
 
-            find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ejecutar']"))
-            print("🔵 CLICK BOTON EJECUTAR")
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ejecutar']"))
+        print("🔵 CLICK BOTON EJECUTAR")
 
-            validar_mensaje_snackbar(driver, "Operaciones ejecutadas exitosamente")
+        validar_mensaje_snackbar(driver, "Operaciones ejecutadas exitosamente")
 
-        except TimeoutException:
-            print("❌ No se pudo realizar el cierre de caja porque un elemento no fue encontrado a tiempo.")
 
     def tearDown(self):
+        test_fallo = False
+            
+        if hasattr(self._outcome, 'result'):
+            errores_y_fallos = self._outcome.result.errors + self._outcome.result.failures
+            for test, traceback in errores_y_fallos:
+                if test == self:
+                    test_fallo = True
+                    break
+        elif hasattr(self._outcome, 'errors'):
+            for method, error in self._outcome.errors:
+                if error:
+                    test_fallo = True
+                    break
+
+        if test_fallo:
+            nombre_test = self._testMethodName
+            carpeta_screenshots = "screenshots_errores"
+            
+            if not os.path.exists(carpeta_screenshots):
+                os.makedirs(carpeta_screenshots)
+            
+            timestamp = time.strftime("%Y%m%d_%H%M%S")
+            nombre_archivo = f"{nombre_test}_{timestamp}.png"
+            ruta_completa = os.path.join(carpeta_screenshots, nombre_archivo)
+            
+            self.driver.save_screenshot(ruta_completa)
+            print(f"\n📸 ERROR DETECTADO: Captura de pantalla guardada en -> {ruta_completa}")
         self.driver.quit()
 
 if __name__ == '__main__':

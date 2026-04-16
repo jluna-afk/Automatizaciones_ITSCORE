@@ -57,38 +57,59 @@ class TestSubirArchivoConTuFormato(unittest.TestCase):
     def test_subir_archivo_pago_mutual(self):
         driver = self.driver
 
-        try:
-            find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
-            find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
-            find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
-            print("🔵 INGRESO A LA PLATAFORMA")
+        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
+        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
+        print("🔵 INGRESO A LA PLATAFORMA")
 
-            find_and_click(driver, (By.LINK_TEXT, "Archivos"))
-            find_and_click(driver, (By.LINK_TEXT, "Entrada"))
-            print("🔵 INGRESO A ARCHIVOS ENTRADA")
+        find_and_click(driver, (By.LINK_TEXT, "Archivos"))
+        find_and_click(driver, (By.LINK_TEXT, "Entrada"))
+        print("🔵 INGRESO A ARCHIVOS ENTRADA")
 
-            find_and_click(driver, (By.XPATH, "//i[@class='fas fa-search']"))
-            find_and_click(driver, (By.XPATH, "//td[normalize-space()='Generico']"))
-            print("🔵 SELECCIÓN DEL GRUPO 'Generico'")
+        find_and_click(driver, (By.XPATH, "//i[@class='fas fa-search']"))
+        find_and_click(driver, (By.XPATH, "//td[normalize-space()='Generico']"))
+        print("🔵 SELECCIÓN DEL GRUPO 'Generico'")
 
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            nombre_archivo = 'pagos_.txt'
-            ruta_archivo = r"C:\Users\Joaquin\Desktop\Archivos Pruebas\pagos_.txt"
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        nombre_archivo = 'pagos_.txt'
+        ruta_archivo = r"C:\Users\Joaquin\Desktop\Archivos Pruebas\pagos_.txt"
 
-            xpath_input_file = "//tr[contains(., 'Pagos AHORRO MUTUAL')]//input[@type='file']"
-            
-            self.upload_file_xpath(xpath_input_file, ruta_archivo)
+        xpath_input_file = "//tr[contains(., 'Pagos AHORRO MUTUAL')]//input[@type='file']"
+        
+        self.upload_file_xpath(xpath_input_file, ruta_archivo)
 
-            print("⏳ Esperando la validación del archivo...")
-            validar_mensaje(driver, "Archivo válido")
+        print("⏳ Esperando la validación del archivo...")
+        validar_mensaje(driver, "Archivo válido")
 
-        except TimeoutException:
-            print("❌ El test falló porque un elemento no fue encontrado a tiempo.")
-        except Exception as e:
-            print(f"❌ El test falló por una excepción inesperada: {e}")
 
     def tearDown(self):
-        time.sleep(4)
+        test_fallo = False
+            
+        if hasattr(self._outcome, 'result'):
+            errores_y_fallos = self._outcome.result.errors + self._outcome.result.failures
+            for test, traceback in errores_y_fallos:
+                if test == self:
+                    test_fallo = True
+                    break
+        elif hasattr(self._outcome, 'errors'):
+            for method, error in self._outcome.errors:
+                if error:
+                    test_fallo = True
+                    break
+
+        if test_fallo:
+            nombre_test = self._testMethodName
+            carpeta_screenshots = "screenshots_errores"
+            
+            if not os.path.exists(carpeta_screenshots):
+                os.makedirs(carpeta_screenshots)
+            
+            timestamp = time.strftime("%Y%m%d_%H%M%S")
+            nombre_archivo = f"{nombre_test}_{timestamp}.png"
+            ruta_completa = os.path.join(carpeta_screenshots, nombre_archivo)
+            
+            self.driver.save_screenshot(ruta_completa)
+            print(f"\n📸 ERROR DETECTADO: Captura de pantalla guardada en -> {ruta_completa}")
         self.driver.quit()
 
 if __name__ == '__main__':

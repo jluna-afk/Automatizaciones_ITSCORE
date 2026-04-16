@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import time
+import os
 
 def find_and_send_keys(driver, by_locator, value, wait_time=50):
     element = WebDriverWait(driver, wait_time).until(
@@ -84,39 +85,62 @@ class TestGrupoAfinidad(unittest.TestCase):
     def test_nuevo_grupoafinidad(self):
         driver = self.driver
 
-        try:
-            find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
-            find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
-            find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
-            print("🔵 INGRESO A LA PLATAFORMA")
+        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
+        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
+        print("🔵 INGRESO A LA PLATAFORMA")
 
-            find_and_click(driver, (By.LINK_TEXT, "Personas"))
-            find_and_click(driver, (By.LINK_TEXT, "Grupos de afinidad"))
-            print("🔵 INGRESO AL MODULO")
+        find_and_click(driver, (By.LINK_TEXT, "Personas"))
+        find_and_click(driver, (By.LINK_TEXT, "Grupos de afinidad"))
+        print("🔵 INGRESO AL MODULO")
 
-            find_and_send_keys(driver, (By.XPATH, "//div[@class='col-md-4 pl-0']//input[@type='text']"), "Prueba")
-            print("🔵 INGRESO DESCRIPCION")
-            find_and_send_keys(driver, (By.XPATH, "//div[@class='col-md-2']//input[@type='text']"), "PP")
-            print("🔵 INGRESO DE DESC REDUCIDA")
-            find_and_send_keys(driver, (By.XPATH, "//div[@class='col-md-6']//input[@type='text']"), "Test de Prueba")
-            print("🔵 INGRESO DE OBSERVACIONES")
+        find_and_send_keys(driver, (By.XPATH, "//div[@class='col-md-4 pl-0']//input[@type='text']"), "Prueba")
+        print("🔵 INGRESO DESCRIPCION")
+        find_and_send_keys(driver, (By.XPATH, "//div[@class='col-md-2']//input[@type='text']"), "PP")
+        print("🔵 INGRESO DE DESC REDUCIDA")
+        find_and_send_keys(driver, (By.XPATH, "//div[@class='col-md-6']//input[@type='text']"), "Test de Prueba")
+        print("🔵 INGRESO DE OBSERVACIONES")
 
-            Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Usuario']/preceding-sibling::span[@class='checkmark']"))
-            Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Cliente']/preceding-sibling::span[@class='checkmark']"))
-            Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Proveedor']/preceding-sibling::span[@class='checkmark']"))
-            Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Entidad de cobro']/preceding-sibling::span[@class='checkmark']"))
-            Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Vendedor']/preceding-sibling::span[@class='checkmark']"))
-            Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Banco']/preceding-sibling::span[@class='checkmark']"))
-            Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Beneficiario']/preceding-sibling::span[@class='checkmark']"))
-            print("🔵 CLICK EN EL CHECKBOX")
+        Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Usuario']/preceding-sibling::span[@class='checkmark']"))
+        Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Cliente']/preceding-sibling::span[@class='checkmark']"))
+        Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Proveedor']/preceding-sibling::span[@class='checkmark']"))
+        Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Entidad de cobro']/preceding-sibling::span[@class='checkmark']"))
+        Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Vendedor']/preceding-sibling::span[@class='checkmark']"))
+        Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Banco']/preceding-sibling::span[@class='checkmark']"))
+        Checkbox_Xpath(driver, (By.XPATH, "//p[normalize-space()='Beneficiario']/preceding-sibling::span[@class='checkmark']"))
+        print("🔵 CLICK EN EL CHECKBOX")
 
-            validar_mensaje_snackbar(driver, "//button[normalize-space()='Crear']", "El grupo de afinidad fue creado correctamente.")
-        except TimeoutException:
-            print("❌ El grupo no se pudo crear.")
+        validar_mensaje_snackbar(driver, "//button[normalize-space()='Crear']", "El grupo de afinidad fue creado correctamente.")
 
           
-
     def tearDown(self):
+        test_fallo = False
+            
+        if hasattr(self._outcome, 'result'):
+            errores_y_fallos = self._outcome.result.errors + self._outcome.result.failures
+            for test, traceback in errores_y_fallos:
+                if test == self:
+                    test_fallo = True
+                    break
+        elif hasattr(self._outcome, 'errors'):
+            for method, error in self._outcome.errors:
+                if error:
+                    test_fallo = True
+                    break
+
+        if test_fallo:
+            nombre_test = self._testMethodName
+            carpeta_screenshots = "screenshots_errores"
+            
+            if not os.path.exists(carpeta_screenshots):
+                os.makedirs(carpeta_screenshots)
+            
+            timestamp = time.strftime("%Y%m%d_%H%M%S")
+            nombre_archivo = f"{nombre_test}_{timestamp}.png"
+            ruta_completa = os.path.join(carpeta_screenshots, nombre_archivo)
+            
+            self.driver.save_screenshot(ruta_completa)
+            print(f"\n📸 ERROR DETECTADO: Captura de pantalla guardada en -> {ruta_completa}")
         self.driver.quit()
 
 if __name__ == '__main__':

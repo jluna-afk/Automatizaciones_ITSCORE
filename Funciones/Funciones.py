@@ -343,10 +343,15 @@ class Funciones:
         valor.send_keys(texto)
         
 
-    def find_and_send_keys(self, by_locator, value, wait_time=50):
-        element = WebDriverWait(self.driver, wait_time).until(
+    def find_and_send_keys(driver, by_locator, value, wait_time=50):
+        element = WebDriverWait(driver, wait_time).until(
+            EC.presence_of_element_located(by_locator)
+        )
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+        element = WebDriverWait(driver, wait_time).until(
             EC.visibility_of_element_located(by_locator)
         )
+        element.clear()
         element.send_keys(value)
         return element
 
@@ -384,6 +389,26 @@ class Funciones:
             return False
         except Exception as e:
             return False
+        
+    def seleccionar_opcion_ng_select(self, locator_input, texto_opcion, wait_time=10):
+        self.find_and_send_keys(locator_input, texto_opcion, wait_time)
+        time.sleep(0.5) 
+        
+        try:
+            opciones = WebDriverWait(self.driver, wait_time).until(
+                EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.ng-option"))
+            )
+            
+            for opcion in opciones:
+                if texto_opcion.lower() in opcion.text.lower():
+                    self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", opcion)
+                    opcion.click()
+                    return True
+                    
+            raise AssertionError(f"❌ Falló: No se encontró la opción '{texto_opcion}' en el desplegable filtrado.")
+            
+        except TimeoutException:
+            raise AssertionError(f"❌ Falló: Las opciones del desplegable nunca cargaron al buscar '{texto_opcion}'.")
 
     def validar_mensaje(self, mensaje_exito, wait_time=10):
         try:

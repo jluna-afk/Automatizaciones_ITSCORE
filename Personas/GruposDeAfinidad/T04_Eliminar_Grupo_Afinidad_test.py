@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import time
+import os
 
 def find_and_send_keys(driver, by_locator, value, wait_time=50):
     element = WebDriverWait(driver, wait_time).until(
@@ -88,27 +89,51 @@ class TestGrupoAfinidad(unittest.TestCase):
     def test_eliminar_grupoafinidad(self):
         driver = self.driver
 
-        try:
-            find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
-            find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
-            find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
-            print("🔵 INGRESO A LA PLATAFORMA")
+        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
+        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
+        print("🔵 INGRESO A LA PLATAFORMA")
 
-            find_and_click(driver, (By.LINK_TEXT, "Personas"))
-            find_and_click(driver, (By.LINK_TEXT, "Grupos de afinidad"))
-            print("🔵 INGRESO AL MODULO")
+        find_and_click(driver, (By.LINK_TEXT, "Personas"))
+        find_and_click(driver, (By.LINK_TEXT, "Grupos de afinidad"))
+        print("🔵 INGRESO AL MODULO")
 
-            find_and_click_js(driver, (By.XPATH, "//body[1]/app-root[1]/app-main[1]/div[1]/app-grupos-afinidad[1]/div[1]/form[1]/div[4]/table[1]/tbody[1]/tr[7]/td[4]"))
-            print("🔵 DESPLIEGUE DEL GRUPO")
+        find_and_click_js(driver, (By.XPATH, "//body[1]/app-root[1]/app-main[1]/div[1]/app-grupos-afinidad[1]/div[1]/form[1]/div[4]/table[1]/tbody[1]/tr[7]/td[4]"))
+        print("🔵 DESPLIEGUE DEL GRUPO")
 
-            find_and_click(driver, (By.XPATH, "//button[normalize-space()='Eliminar']"))
-            print("🔵 CLICK PRIMER ELIMINAR")
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Eliminar']"))
+        print("🔵 CLICK PRIMER ELIMINAR")
 
-            validar_mensaje_snackbar(driver, "//button[@class='col-5 btn-danger-its']", "El grupo de afinidad fue eliminado correctamente.")
-        except TimeoutException:
-            print("❌ El grupo no se pudo crear.")
+        validar_mensaje_snackbar(driver, "//button[@class='col-5 btn-danger-its']", "El grupo de afinidad fue eliminado correctamente.")
 
     def tearDown(self):
+        test_fallo = False
+            
+        if hasattr(self._outcome, 'result'):
+            errores_y_fallos = self._outcome.result.errors + self._outcome.result.failures
+            for test, traceback in errores_y_fallos:
+                if test == self:
+                    test_fallo = True
+                    break
+        elif hasattr(self._outcome, 'errors'):
+            for method, error in self._outcome.errors:
+                if error:
+                    test_fallo = True
+                    break
+
+        if test_fallo:
+            nombre_test = self._testMethodName
+            carpeta_screenshots = "screenshots_errores"
+            
+            if not os.path.exists(carpeta_screenshots):
+                os.makedirs(carpeta_screenshots)
+            
+            timestamp = time.strftime("%Y%m%d_%H%M%S")
+            nombre_archivo = f"{nombre_test}_{timestamp}.png"
+            ruta_completa = os.path.join(carpeta_screenshots, nombre_archivo)
+            
+            self.driver.save_screenshot(ruta_completa)
+            print(f"\n📸 ERROR DETECTADO: Captura de pantalla guardada en -> {ruta_completa}")
         self.driver.quit()
 
 if __name__ == '__main__':

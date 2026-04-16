@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import time
+import os
 
 def find_and_send_keys(driver, by_locator, value, wait_time=50):
     element = WebDriverWait(driver, wait_time).until(
@@ -32,7 +33,7 @@ def seleccionar_opcion_ng_select(driver, texto_opcion, wait_time=10):
                 opcion.click()
                 return True
         return False
-    except Exception as e:
+    except Exception:
         return False
 
 def validar_y_esperar_desaparicion(driver, mensaje_exito, wait_time_vis=10, wait_time_invis=10):
@@ -65,7 +66,7 @@ def validar_mensaje(driver, mensaje_exito, wait_time=10):
         )
         print(f"✅ La relacion se creo correctamente: Se mostró el mensaje '{mensaje_exito}'.")
     except TimeoutException:
-        print(f"❌ La relacion no se creo: No apareció el mensaje de éxito esperado.")
+        print("❌ La relacion no se creo: No apareció el mensaje de éxito esperado.")
     except Exception as e:
         print(f"❌ Ocurrió un error en la validación del mensaje: {e}")
 
@@ -113,41 +114,63 @@ class TestCrearRelacionBeneficiario(unittest.TestCase):
     def test_crear_relacion_beneficiario(self):
         driver = self.driver
 
-        try:
-            find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
-            find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
-            find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
-            print("🔵 INGRESO A ITS CORE")
+        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
+        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
+        print("🔵 INGRESO A ITS CORE")
 
-            find_and_click(driver, (By.XPATH, "//span[normalize-space()='Personas']"))
-            find_and_click(driver, (By.XPATH, "//a[@href='#/personas/gestion']"))
-            print("🔵 INGRESO AL MODULO")
+        find_and_click(driver, (By.XPATH, "//span[normalize-space()='Personas']"))
+        find_and_click(driver, (By.XPATH, "//a[@href='#/personas/gestion']"))
+        print("🔵 INGRESO AL MODULO")
 
-            find_and_click(driver, (By.XPATH, "//button[@class='btn btn-outline-primary- lupa']"))
-            find_and_click(driver, (By.XPATH, "//span[normalize-space()='1pruebas, No Usar']"))
-            print("🔵 SELECCION DE LA PERSONA")
+        find_and_click(driver, (By.XPATH, "//button[@class='btn btn-outline-primary- lupa']"))
+        find_and_click(driver, (By.XPATH, "//span[normalize-space()='1pruebas, No Usar']"))
+        print("🔵 SELECCION DE LA PERSONA")
 
-            locator_tarjeta_beneficiario = (By.XPATH, "//div[contains(@class, 'relation-card-btn') and .//h3[text()='Beneficiario']]")
-            find_and_click(driver, locator_tarjeta_beneficiario)
-            print("🔵 CLICK EN LA CARD BENEFICIARIO")
+        locator_tarjeta_beneficiario = (By.XPATH, "//div[contains(@class, 'relation-card-btn') and .//h3[text()='Beneficiario']]")
+        find_and_click(driver, locator_tarjeta_beneficiario)
+        print("🔵 CLICK EN LA CARD BENEFICIARIO")
 
-            find_and_click(driver, (By.XPATH, "//button[normalize-space()='Crear']"))
-            validar_y_esperar_desaparicion(driver, "Relación creada con éxito")
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Crear']"))
+        validar_y_esperar_desaparicion(driver, "Relación creada con éxito")
 
-            find_and_click(driver, (By.XPATH, "//button[normalize-space()='+ Agregar']"))
-            print("🔵 CLICK EN AGREGAR")
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='+ Agregar']"))
+        print("🔵 CLICK EN AGREGAR")
 
-            find_and_click(driver, (By.XPATH, "//ng-select[@id='grupo']//input[@type='text']"))
-            seleccionar_opcion_ng_select(driver, "ITS CORE")
-            print("🔵 SELECCION GRUPO AFINIDAD")
+        find_and_click(driver, (By.XPATH, "//ng-select[@id='grupo']//input[@type='text']"))
+        seleccionar_opcion_ng_select(driver, "ITS CORE")
+        print("🔵 SELECCION GRUPO AFINIDAD")
 
-            validar_mensaje_snackbar(driver, "//div[@class='mb-3 form-actions']//button[@type='button'][normalize-space()='Guardar']", "Relación de beneficiario modificada con éxito")
-            
-
-        except TimeoutException:
-            print("❌ La relación no se pudo crear porque un elemento no fue encontrado a tiempo.")
+        validar_mensaje_snackbar(driver, "//div[@class='mb-3 form-actions']//button[@type='button'][normalize-space()='Guardar']", "Relación de beneficiario modificada con éxito")
             
     def tearDown(self):
+        test_fallo = False
+            
+        if hasattr(self._outcome, 'result'):
+            errores_y_fallos = self._outcome.result.errors + self._outcome.result.failures
+            for test, traceback in errores_y_fallos:
+                if test == self:
+                    test_fallo = True
+                    break
+        elif hasattr(self._outcome, 'errors'):
+            for method, error in self._outcome.errors:
+                if error:
+                    test_fallo = True
+                    break
+
+        if test_fallo:
+            nombre_test = self._testMethodName
+            carpeta_screenshots = "screenshots_errores"
+            
+            if not os.path.exists(carpeta_screenshots):
+                os.makedirs(carpeta_screenshots)
+            
+            timestamp = time.strftime("%Y%m%d_%H%M%S")
+            nombre_archivo = f"{nombre_test}_{timestamp}.png"
+            ruta_completa = os.path.join(carpeta_screenshots, nombre_archivo)
+            
+            self.driver.save_screenshot(ruta_completa)
+            print(f"\n📸 ERROR DETECTADO: Captura de pantalla guardada en -> {ruta_completa}")
         self.driver.quit()
 
 if __name__ == '__main__':
