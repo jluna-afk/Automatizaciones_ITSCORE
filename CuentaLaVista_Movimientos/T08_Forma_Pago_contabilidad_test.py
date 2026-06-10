@@ -126,6 +126,7 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         print("🔵 CLICK EN ACEPTAR")
 
         validar_mensaje_snackbar(driver, "Movimiento confirmado con éxito!")
+        time.sleep(5)
 
         find_and_click(driver, (By.LINK_TEXT, "Contabilidad"))
         find_and_click(driver, (By.LINK_TEXT, "Movimientos"))

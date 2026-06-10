@@ -113,11 +113,6 @@ class TestPersonaGestion(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//span[normalize-space()='Soltero/a']"))
         print("🔵 INGRESO ESTADO CIVIL")
 
-        find_and_send_keys(driver, (By.XPATH, "//ng-select[@id='pep']//input[@type='text']"), "NO")
-        find_and_click(driver, (By.XPATH, "//span[normalize-space()='No']"))
-        print("🔵 INGRESO PEP")
-        time.sleep(1)
-
         find_and_send_keys(driver, (By.XPATH, "//ng-select[@formcontrolname='tipo_documento']//input[@type='text']"), "masculino")
         find_and_click(driver, (By.XPATH, "//span[normalize-space()='DNI Masculino']"))
         print("🔵 INGRESO TIPO DOC")

@@ -112,7 +112,7 @@ class TestContabilidadMovimiento(unittest.TestCase):
         seleccionar_opcion_ng_select(driver, "4 - 431 - BANCO COINAG S.A. - 9137")
         print("🔵 SELECCION CUENTA ORIGEN")
 
-        find_and_click(driver, (By.XPATH, "//ng-select[@id='cuentaDestino']//input[@type='text']"))
+        find_and_click(driver, (By.XPATH, "//ng-select[@id='cuentaDestino']"))
         seleccionar_opcion_ng_select(driver, "0000124900000000010445")
         print("🔵 SELECCION CUENTA DESTINO")
 

@@ -115,6 +115,7 @@ class TestContabilidadMovimiento(unittest.TestCase):
         print("🔵 CLICK BOTON ACEPTAR")
 
         validar_mensaje_snackbar(driver, "Movimiento ejecutado correctamente")
+        time.sleep(4)
 
         find_and_click(driver, (By.LINK_TEXT, "Caja"))
         find_and_click(driver, (By.LINK_TEXT, "Puesto"))
@@ -134,6 +135,7 @@ class TestContabilidadMovimiento(unittest.TestCase):
         print("🔵 CLICK BOTON ACEPTAR")
 
         validar_mensaje_snackbar(driver, "Apertura de caja exitosa")
+        time.sleep(4)
 
         find_and_click(driver, (By.XPATH, "//a[@title='Pendientes Caja']"))
         print("🔵 CLICK EN EL ICONO SECCION PENDIENTES")
@@ -150,8 +152,8 @@ class TestContabilidadMovimiento(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ejecutar']"))
         print("🔵 CLICK BOTON EJECUTAR")
 
-        time.sleep(0.5)
         validar_mensaje_snackbar(driver, "Operaciones ejecutadas exitosamente")
+        time.sleep(6)
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Cerrar Caja']"))
         print("🔵 CLICK BOTON CERRAR CAJA")
@@ -159,7 +161,6 @@ class TestContabilidadMovimiento(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ejecutar']"))
         print("🔵 CLICK BOTON EJECUTAR")
 
-        time.sleep(0.5)
         validar_mensaje_snackbar(driver, "Cierre de caja exitoso")
 
     def tearDown(self):

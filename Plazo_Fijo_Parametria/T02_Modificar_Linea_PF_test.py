@@ -93,6 +93,7 @@ class Test_PlazoFijo_Parametria(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Guardar']"))
         print("🔵 CLICK EN EL CHECKBOX Y GUARDADO")
         validar_mensaje_snackbar(driver, "Permisos modificados correctamente")
+        time.sleep(4)
 
         find_and_click(driver, (By.LINK_TEXT, "Plazo fijo"))
         find_and_click(driver, (By.LINK_TEXT, "Parametría"))

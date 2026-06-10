@@ -76,7 +76,7 @@ def validar_mensaje_snackbar(driver, mensaje_exito, timeout=10):
         raise AssertionError("No se detectó ningún mensaje Snackbar (Timeout)")
 
 
-class Test_PlazoFijo_Parametria(unittest.TestCase):
+class Test_PlazoFijo_Gestion(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         self.driver.maximize_window()
@@ -111,7 +111,7 @@ class Test_PlazoFijo_Parametria(unittest.TestCase):
         print("🔵 SELECCION TIPO PERSONA")
         time.sleep(0.5)
 
-        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='codigo']"), "41656139")
+        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='codigo']"), "20579910")
         print("🔵 INGRESO DNI")
 
         find_and_send_keys(driver, (By.XPATH, "//app-custom-date[@formcontrolname='fechaSolicitud']//input[@type='text']"), "10112027")
@@ -158,7 +158,7 @@ class Test_PlazoFijo_Parametria(unittest.TestCase):
         find_and_send_keys(driver, (By.XPATH, "//div[@class='ng-select-container']//input[@type='text']"), "Cuenta a la vista" + Keys.ENTER)
         print("🔵 SELECCION FORMA DE COBRO")
 
-        find_and_send_keys(driver, (By.XPATH, "//ng-select[@id='cuentaOrigen']//input[@type='text']"), "PROV AGUAS" + Keys.ENTER)
+        find_and_send_keys(driver, (By.XPATH, "//ng-select[@id='cuentaOrigen']//input[@type='text']"), "PROV. INFORMATICA" + Keys.ENTER)
         print("🔵 SELECCION CUENTA")
 
         copiar_y_pegar_importe(driver)

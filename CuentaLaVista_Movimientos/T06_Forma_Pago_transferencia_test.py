@@ -102,7 +102,6 @@ class TestMovimientosCuentaVista(unittest.TestCase):
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Continuar']"))
         print("🔵 CLICK EN CONTINUAR")
-        time.sleep(700)
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='+ Agregar forma de pago']"))
         print("🔵 CLICK EN AGREGAR FORMA DE PAGO")

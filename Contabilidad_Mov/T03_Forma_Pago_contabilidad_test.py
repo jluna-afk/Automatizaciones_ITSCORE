@@ -116,7 +116,7 @@ class TestContabilidadMovimiento(unittest.TestCase):
 
         validar_mensaje_snackbar(driver, "Movimiento ejecutado correctamente")
 
-        time.sleep(4)
+        # time.sleep(4)
 
         find_and_click(driver, (By.XPATH, "//i[@class='fas fa-clipboard-check']"))
         print("🔵 CLICK EN EL ICONO SECCION PENDIENTES")

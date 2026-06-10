@@ -82,7 +82,7 @@ class TestCierreDeCaja(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ejecutar']"))
         print("🔵 CLICK BOTON EJECUTAR")
 
-        validar_mensaje_snackbar(driver, "Operaciones ejecutadas exitosamente")
+        validar_mensaje_snackbar(driver, "Cierre de caja exitoso")
 
 
     def tearDown(self):
