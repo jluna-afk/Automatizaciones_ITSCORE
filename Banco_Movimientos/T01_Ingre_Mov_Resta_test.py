@@ -63,7 +63,7 @@ class TestBancoMovimiento(unittest.TestCase):
         self.driver.maximize_window()
         self.driver.get("http://qa.itscore.its.com.ar:3080/#/login")
 
-    def ingre_mov_resta_banco(self):
+    def test_ingre_mov_resta_banco(self):
         driver = self.driver
 
         find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
