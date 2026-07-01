@@ -7,7 +7,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
-from selenium.webdriver.common.keys import Keys
 import os
 
 def find_and_send_keys(driver, by_locator, value, wait_time=50):
@@ -79,7 +78,7 @@ class Test_Prestamos_Parametria(unittest.TestCase):
         self.driver.maximize_window()
         self.driver.get("http://qa.itscore.its.com.ar:3080/#/login")
 
-    def test_modificar_linea_prestamo(self):
+    def test_eliminar_linea_prestamo(self):
         driver = self.driver
 
         find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
@@ -88,30 +87,7 @@ class Test_Prestamos_Parametria(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
         print("🔵 INGRESO A LA PLATAFORMA")
 
-        find_and_click(driver, (By.LINK_TEXT, "Seguridad"))
-        find_and_click(driver, (By.XPATH, "//a[@href='#/seguridad/parametria']"))
-
-        find_and_send_keys(driver, (By.XPATH, "//input[@id='grupo']"), "1" + Keys.TAB)
-        # find_and_click(driver, (By.XPATH, "//td[normalize-space()='Administrador']"))
-        print("🔵 SELECCION DE GRUPO")
-
-        find_and_click(driver, (By.XPATH, "//app-collapse[@title='Líneas']//i[@class='fa fas fa-chevron-down']"))
-        print("🔵 DESPLIEGUE DE LINEAS")
-
-        find_and_send_keys(driver, (By.XPATH, "//input[@id='lineas']"), "Test Crear Linea Prestamo")
-        print("🔵 BUSQUEDA DE LA LINEA")
-
-        find_and_click(driver, (By.XPATH, "//tr[contains(., 'Préstamo - Test Crear Linea Prestamo')]//span[@class='checkmark']"))
-        print("🔵 CLIC CHECKBOX DE LA LINEA")
-
-        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Guardar']"))
-        print("🔵 CLICK EN GUARDAR")
-
-        validar_mensaje_snackbar(driver, "Permisos modificados correctamente")
-        print("✅ EXITO: PERMISOS MODIFICADOS CORRECTAMENTE")
-
         find_and_click(driver, (By.LINK_TEXT, "Préstamos"))
-        find_and_click(driver, (By.LINK_TEXT, "Amortizable"))
         find_and_click(driver, (By.LINK_TEXT, "Parametría"))
         find_and_click(driver, (By.LINK_TEXT, "Líneas"))
         print("🔵 INGRESO AL MODULO DE PRESTAMOS PARAMETRIA")
@@ -127,41 +103,15 @@ class Test_Prestamos_Parametria(unittest.TestCase):
 
         find_and_click(driver, (By.XPATH, "//td[normalize-space()='Test Crear Linea Prestamo']"))
         print("🔵 SELECCION PRESTAMO")
-
-        find_and_click(driver, (By.XPATH, "//ng-select[@id='sistema']"))
-        seleccionar_opcion_ng_select(driver, "Francés con IVA")
-        print("🔵 SELECCION SISTEMA")
-
-        find_and_click(driver, (By.XPATH, "//ng-select[@id='vencimientos']"))
-        seleccionar_opcion_ng_select(driver, "Mismo día o hábil anterior")
-        print("🔵 SELECCION VENCIMIENTOS")
-
-        valor_esperado = "20"
-        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='gastoFijo']"), valor_esperado)
-        print("🔵 INGRESO GASTO FIJO")
-
-        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Guardar']"))
-        print("🔵 CLICK EN GUARDAR")
         
-        validar_mensaje_snackbar(driver, "Línea actualizada correctamente")
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Eliminar']"))
+        print("🔵 CLICK EN ELIMINAR")
 
-        try:
-            gasto_fijo_input = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, "//input[@formcontrolname='gastoFijo']"))
-            )
-            
-            valor_actual = gasto_fijo_input.get_attribute("value")
-            print(f"🔵 VERIFICANDO GASTO FIJO EN PANTALLA: Encontrado '{valor_actual}'")
+        find_and_click(driver, (By.XPATH, "//app-dialog-simple//button[contains(text(), 'Eliminar')]"))
+        print("🔵 CONFIRMO ELIMINAR")
+        
+        validar_mensaje_snackbar(driver, "Línea eliminada correctamente")
 
-            self.assertEqual(
-                valor_actual, 
-                valor_esperado, 
-                f"El gasto fijo esperado era '{valor_esperado}', pero se visualiza '{valor_actual}'."
-            )
-            print("✅ EXITO: El importe de gasto fijo se visualiza correctamente tras guardar.")
-            
-        except TimeoutException:
-            self.fail("❌ ERROR: No se pudo localizar el campo 'gastoFijo' para validar su valor después de guardar.")
 
     def tearDown(self):
         test_fallo = False
