@@ -4,69 +4,17 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 import os
+import sys
 
-def find_and_send_keys(driver, by_locator, value, wait_time=50):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.visibility_of_element_located(by_locator)
-    )
-    element.send_keys(value)
-    return element
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-def find_and_click(driver, by_locator, wait_time=20):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.presence_of_element_located(by_locator)
-    )
-    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
-    element = WebDriverWait(driver, wait_time).until(
-        EC.element_to_be_clickable(by_locator)
-    )
-    element.click()
-    return element
-
-def seleccionar_opcion_ng_select(driver, locator_input, texto_opcion, wait_time=10):
-    find_and_send_keys(driver, locator_input, texto_opcion, wait_time)
-    time.sleep(0.5) 
-    
-    try:
-        opciones = WebDriverWait(driver, wait_time).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.ng-option"))
-        )
-        
-        for opcion in opciones:
-            if texto_opcion.lower() in opcion.text.lower():
-                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", opcion)
-                opcion.click()
-                return True
-                
-        raise AssertionError(f"❌ Falló: No se encontró la opción '{texto_opcion}' en el desplegable filtrado.")
-        
-    except TimeoutException:
-         raise AssertionError(f"❌ Falló: Las opciones del desplegable nunca cargaron al buscar '{texto_opcion}'.")
-
-def validar_mensaje_snackbar(driver, mensaje_exito, timeout=10):
-
-    try:
-        snackbar = WebDriverWait(driver, timeout).until(
-            EC.visibility_of_element_located(
-                (By.CSS_SELECTOR, "simple-snack-bar, .mat-mdc-snack-bar-label")
-            )
-        )
-
-        texto_capturado = snackbar.text.strip()
-
-        if mensaje_exito.lower() in texto_capturado.lower():
-            print(f"✅ EXITO: {texto_capturado}")
-        else:
-            print(f"❌ ERROR DETECTADO EN PANTALLA: {texto_capturado}")
-            raise AssertionError(f"Mensaje inesperado: {texto_capturado}")
-
-    except TimeoutException:
-        driver.save_screenshot("fallo_captura_mensaje.png")
-        raise AssertionError("No se detectó ningún mensaje Snackbar (Timeout)")
+from Pages.base_page import (
+    find_and_send_keys,
+    find_and_click_with_scroll,
+    seleccionar_opcion_ng_select_with_filter,
+    validar_mensaje_snackbar
+)
 
 class TestAsientosAutomaticos(unittest.TestCase):
     def setUp(self):
@@ -80,63 +28,63 @@ class TestAsientosAutomaticos(unittest.TestCase):
         find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
         find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
         print("🔵 INGRESO CREDENCIALES")
-        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
+        find_and_click_with_scroll(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
         print("🔵 CLICK BOTON INGRESAR")
 
-        find_and_click(driver, (By.LINK_TEXT, "Contabilidad"))
-        find_and_click(driver, (By.LINK_TEXT, "Parametría"))
-        find_and_click(driver, (By.LINK_TEXT, "Asientos automáticos"))
+        find_and_click_with_scroll(driver, (By.LINK_TEXT, "Contabilidad"))
+        find_and_click_with_scroll(driver, (By.LINK_TEXT, "Parametría"))
+        find_and_click_with_scroll(driver, (By.LINK_TEXT, "Asientos automáticos"))
         print("🔵 INGRESO AL MODULO ASIENTOS AUTOMATICOS")
 
-        seleccionar_opcion_ng_select(driver, (By.XPATH, "(//input[@type='text'])[1]"), "Banco")
+        seleccionar_opcion_ng_select_with_filter(driver, (By.XPATH, "(//input[@type='text'])[1]"), "Banco")
         print("🔵 SELECCION OPERATORIA")
 
-        seleccionar_opcion_ng_select(driver, (By.XPATH, "//ng-select[@formcontrolname='operacion_id']//input[@type='text']"), "DEBITO POR MOVIMIENTO ENTRE CUENTAS")
+        seleccionar_opcion_ng_select_with_filter(driver, (By.XPATH, "//ng-select[@formcontrolname='operacion_id']//input[@type='text']"), "DEBITO POR MOVIMIENTO ENTRE CUENTAS")
         print("🔵 SELECCION OPERACION")
 
-        seleccionar_opcion_ng_select(driver, (By.XPATH, "//ng-select[@class='form-select ng-select-custom ng-select-searchable ng-select ng-select-single ng-untouched ng-pristine ng-invalid']//input[@type='text']"), "1 BANCO BBVA ARGENTINA S.A.")
+        seleccionar_opcion_ng_select_with_filter(driver, (By.XPATH, "//ng-select[@class='form-select ng-select-custom ng-select-searchable ng-select ng-select-single ng-untouched ng-pristine ng-invalid']//input[@type='text']"), "1 BANCO BBVA ARGENTINA S.A.")
         print("🔵 SELECCION LINEA")
 
         find_and_send_keys(driver, (By.XPATH, "//input[@class='form-control form-control-sm text-left pl-2']"), "21082025")
         print("🔵 INGRESO FECHA")
 
-        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Continuar']"))
+        find_and_click_with_scroll(driver, (By.XPATH, "//button[normalize-space()='Continuar']"))
         print("🔵 CLICK BOTON CONTINUAR")
 
-        find_and_click(driver, (By.XPATH, "//button[normalize-space()='+ Agregar importe']"))
+        find_and_click_with_scroll(driver, (By.XPATH, "//button[normalize-space()='+ Agregar importe']"))
         print("🔵 CLICK EN AGREGAR IMPORTE")
 
-        seleccionar_opcion_ng_select(driver, (By.XPATH, "(//input[@type='text'])[6]"), "IMPORTE")
+        seleccionar_opcion_ng_select_with_filter(driver, (By.XPATH, "(//input[@type='text'])[6]"), "IMPORTE")
         print("🔵 SELECCION TIPO IMPORTE")
 
         find_and_send_keys(driver, (By.XPATH, "//input[@id='numeroCuenta']"), "1.1.1.01.01.01")
         print("🔵 INGRESO CUENTA HABER")
         
-        seleccionar_opcion_ng_select(driver, (By.XPATH, "(//input[@type='text'])[9]"), "+")
+        seleccionar_opcion_ng_select_with_filter(driver, (By.XPATH, "(//input[@type='text'])[9]"), "+")
         print("🔵 SELECCION SIGNO +")
         
-        find_and_click(driver, (By.XPATH, "//body[1]/app-root[1]/app-main[1]/div[1]/app-asientos-automaticos[1]/div[1]/form[1]/div[3]/table[1]/tbody[1]/tr[1]/td[5]/div[1]/label[1]/span[1]"))
+        find_and_click_with_scroll(driver, (By.XPATH, "//body[1]/app-root[1]/app-main[1]/div[1]/app-asientos-automaticos[1]/div[1]/form[1]/div[3]/table[1]/tbody[1]/tr[1]/td[5]/div[1]/label[1]/span[1]"))
         print("🔵 CLICK EN CHECK DE IMPORTE HABER")
         
-        find_and_click(driver, (By.XPATH, "//button[normalize-space()='+ Agregar importe']"))
+        find_and_click_with_scroll(driver, (By.XPATH, "//button[normalize-space()='+ Agregar importe']"))
         print("🔵 CLICK EN AGREGAR IMPORTE")
 
-        seleccionar_opcion_ng_select(driver, (By.XPATH, "(//input[@type='text'])[10]"), "IMPORTE")
+        seleccionar_opcion_ng_select_with_filter(driver, (By.XPATH, "(//input[@type='text'])[10]"), "IMPORTE")
         print("🔵 SELECCION TIPO IMPORTE")
 
         find_and_send_keys(driver, (By.XPATH, "//tr[@class='ng-invalid ng-touched ng-dirty']//input[@id='numeroCuenta']"), "1.1.5.01.01.01")
         print("🔵 INGRESO CUENTA DEBE")
 
-        seleccionar_opcion_ng_select(driver, (By.XPATH, "(//input[@type='text'])[13]"), "+")
+        seleccionar_opcion_ng_select_with_filter(driver, (By.XPATH, "(//input[@type='text'])[13]"), "+")
         print("🔵 SELECCION SIGNO +")
 
-        find_and_click(driver, (By.XPATH, "//body[1]/app-root[1]/app-main[1]/div[1]/app-asientos-automaticos[1]/div[1]/form[1]/div[3]/table[1]/tbody[1]/tr[2]/td[6]/div[1]/label[1]/span[1]"))
+        find_and_click_with_scroll(driver, (By.XPATH, "//body[1]/app-root[1]/app-main[1]/div[1]/app-asientos-automaticos[1]/div[1]/form[1]/div[3]/table[1]/tbody[1]/tr[2]/td[6]/div[1]/label[1]/span[1]"))
         print("🔵 CLICK EN CHECK DE IMPORTE DEBE")
 
-        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Crear']"))
+        find_and_click_with_scroll(driver, (By.XPATH, "//button[normalize-space()='Crear']"))
         print("🔵 CLICK EN CREAR")
 
-        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Aceptar']"))
+        find_and_click_with_scroll(driver, (By.XPATH, "//button[normalize-space()='Aceptar']"))
         print("🔵 CLICK EN ACEPTAR")
 
         validar_mensaje_snackbar(driver, "Todas las cuentas deben pertenecer a la misma moneda.")

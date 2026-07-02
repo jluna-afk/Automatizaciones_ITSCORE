@@ -4,59 +4,17 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 import os
+import sys
 
-def find_and_send_keys(driver, by_locator, value, wait_time=50):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.visibility_of_element_located(by_locator)
-    )
-    element.clear()
-    element.send_keys(value)
-    return element
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-def find_and_click(driver, by_locator, wait_time=20):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.element_to_be_clickable(by_locator)
-    )
-    element.click()
-    return element
-
-def seleccionar_opcion_ng_select(driver, texto_opcion, wait_time=10):
-    try:
-        opciones = WebDriverWait(driver, wait_time).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.ng-option"))
-        )
-        for opcion in opciones:
-            if texto_opcion.lower() in opcion.text.lower():
-                opcion.click()
-                return True
-        return False
-    except Exception:
-        return False
-
-def validar_mensaje_snackbar(driver, mensaje_exito, timeout=10):
-
-    try:
-        snackbar = WebDriverWait(driver, timeout).until(
-            EC.visibility_of_element_located(
-                (By.CSS_SELECTOR, "simple-snack-bar, .mat-mdc-snack-bar-label")
-            )
-        )
-
-        texto_capturado = snackbar.text.strip()
-
-        if mensaje_exito.lower() in texto_capturado.lower():
-            print(f"✅ EXITO: {texto_capturado}")
-        else:
-            print(f"❌ ERROR DETECTADO EN PANTALLA: {texto_capturado}")
-            raise AssertionError(f"Mensaje inesperado: {texto_capturado}")
-
-    except TimeoutException:
-        driver.save_screenshot("fallo_captura_mensaje.png")
-        raise AssertionError("No se detectó ningún mensaje Snackbar (Timeout)")
+from Pages.base_page import (
+    find_and_send_keys_with_clear,
+    find_and_click,
+    seleccionar_opcion_ng_select,
+    validar_mensaje_snackbar
+)
 
 class TestContabilidadMovimiento(unittest.TestCase):
     def setUp(self):
@@ -67,8 +25,8 @@ class TestContabilidadMovimiento(unittest.TestCase):
     def testcontabilidad_forma_pago_contabilidad(self):
         driver = self.driver
 
-        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
-        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
+        find_and_send_keys_with_clear(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
+        find_and_send_keys_with_clear(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
         print("🔵 INGRESO CREDENCIALES")
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
         print("🔵 INGRESO A LA PLATAFORMA")
@@ -89,34 +47,29 @@ class TestContabilidadMovimiento(unittest.TestCase):
         seleccionar_opcion_ng_select(driver, "Proveedor")
         print("🔵 SELECCION TIPO PERSONA PROVEEDOR")
 
-        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='persona']"), "41656139")
+        find_and_send_keys_with_clear(driver, (By.XPATH, "//input[@formcontrolname='persona']"), "41656139")
         print("🔵 SELECCION PERSONA")
 
-        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='concepto']"), "Prueba Test")
+        find_and_send_keys_with_clear(driver, (By.XPATH, "//input[@formcontrolname='concepto']"), "Prueba Test")
         print("🔵 INGRESO CONCEPTO")
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Continuar']"))
         print("🔵 CLICK BOTON CONTINUAR")
 
-        find_and_send_keys(driver, (By.XPATH, "//input[@id='importe0']"), "1000")
+        find_and_send_keys_with_clear(driver, (By.XPATH, "//input[@id='importe0']"), "1000")
         print("🔵 INGRESO IMPORTE")
-
-        find_and_click(driver, (By.XPATH, "//button[normalize-space()='+ Agregar forma de pago']"))
-        print("🔵 CLICK AGREGAR FORMA DE PAGO")
 
         find_and_click(driver, (By.XPATH, "//div[@class='ng-select-container']//input[@type='text']"))
         seleccionar_opcion_ng_select(driver, "CONTABILIDAD")
         print("🔵 SELECCION FORMA DE PAGO CONTABILIDAD")
 
-        find_and_send_keys(driver, (By.XPATH, "//input[@class='text-right form-control w-100 ng-untouched ng-pristine ng-invalid']"), "1000")
+        find_and_send_keys_with_clear(driver, (By.XPATH, "//input[@class='text-right form-control w-100 ng-untouched ng-pristine ng-invalid']"), "1000")
         print("🔵 INGRESO IMPORTE")
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Aceptar']"))
         print("🔵 CLICK BOTON ACEPTAR")
 
         validar_mensaje_snackbar(driver, "Movimiento ejecutado correctamente")
-
-        # time.sleep(4)
 
         find_and_click(driver, (By.XPATH, "//i[@class='fas fa-clipboard-check']"))
         print("🔵 CLICK EN EL ICONO SECCION PENDIENTES")

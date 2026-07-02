@@ -9,31 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-def find_and_send_keys(driver, by_locator, value, wait_time=20):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.visibility_of_element_located(by_locator)
-    )
-    element.send_keys(value)
-    return element
-
-def find_and_click(driver, by_locator, wait_time=20):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.element_to_be_clickable(by_locator)
-    )
-    element.click()
-    return element
-
-def validar_mensaje(driver, mensaje_esperado, wait_time=30):
-    try:
-        locator = (By.XPATH, f"//*[contains(text(), '{mensaje_esperado}')]")
-        WebDriverWait(driver, wait_time).until(
-            EC.visibility_of_element_located(locator)
-        )
-        print(f"✅ Validación exitosa: Se mostró el mensaje '{mensaje_esperado}'.")
-    except TimeoutException:
-        print(f"❌ Falló la validación: No apareció el mensaje '{mensaje_esperado}' en {wait_time} segundos.")
-    except Exception as e:
-        print(f"❌ Ocurrió un error inesperado en la validación: {e}")
+from Pages.base_page import find_and_send_keys, find_and_click, validar_mensaje
 
 class TestSubirArchivoConTuFormato(unittest.TestCase):
 
@@ -75,12 +51,10 @@ class TestSubirArchivoConTuFormato(unittest.TestCase):
         ruta_archivo = r"C:\Users\Joaquin\Desktop\Archivos Pruebas\pagos_.txt"
 
         xpath_input_file = "//tr[contains(., 'Pagos AHORRO MUTUAL')]//input[@type='file']"
-        
         self.upload_file_xpath(xpath_input_file, ruta_archivo)
 
         print("⏳ Esperando la validación del archivo...")
         validar_mensaje(driver, "Archivo válido")
-
 
     def tearDown(self):
         test_fallo = False

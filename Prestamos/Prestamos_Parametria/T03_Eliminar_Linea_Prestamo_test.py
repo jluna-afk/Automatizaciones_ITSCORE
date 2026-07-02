@@ -1,76 +1,19 @@
-import unittest
+import os
+import sys
 import time
+import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
-import os
 
-def find_and_send_keys(driver, by_locator, value, wait_time=50):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.visibility_of_element_located(by_locator)
-    )
-    element.clear()
-    element.send_keys(value)
-    return element
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-def find_and_click(driver, by_locator, wait_time=20):
-    for intento in range(3):
-        try:
-            element = WebDriverWait(driver, wait_time).until(
-                EC.element_to_be_clickable(by_locator)
-            )
-            try:
-                element.click()
-            except Exception:
-                driver.execute_script("arguments[0].click();", element)
-            return element
-        
-        except StaleElementReferenceException:
-            if intento == 2:  
-                raise
-            time.sleep(0.5)
-
-def seleccionar_opcion_ng_select(driver, texto_opcion, wait_time=15):
-    try:
-        options_locator = (By.CSS_SELECTOR, "div.ng-option")
-        opciones = WebDriverWait(driver, wait_time).until(
-            EC.presence_of_all_elements_located(options_locator)
-        )
-        
-        for opcion in opciones:
-            if texto_opcion.lower() in opcion.text.lower():
-                driver.execute_script("arguments[0].click();", opcion)
-                return True
-        
-        return False
-    except TimeoutException:
-        return False
-
-def validar_mensaje_snackbar(driver, mensaje_exito, timeout=10):
-
-    try:
-        snackbar = WebDriverWait(driver, timeout).until(
-            EC.visibility_of_element_located(
-                (By.CSS_SELECTOR, "simple-snack-bar, .mat-mdc-snack-bar-label")
-            )
-        )
-
-        texto_capturado = snackbar.text.strip()
-
-        if mensaje_exito.lower() in texto_capturado.lower():
-            print(f"✅ EXITO: {texto_capturado}")
-        else:
-            print(f"❌ ERROR DETECTADO EN PANTALLA: {texto_capturado}")
-            raise AssertionError(f"Mensaje inesperado: {texto_capturado}")
-
-    except TimeoutException:
-        driver.save_screenshot("fallo_captura_mensaje.png")
-        raise AssertionError("No se detectó ningún mensaje Snackbar (Timeout)")
-
+from Pages.base_page import (
+    find_and_send_keys_with_clear,
+    find_and_click,
+    validar_mensaje_snackbar
+)
 
 class Test_Prestamos_Parametria(unittest.TestCase):
     def setUp(self):
@@ -81,8 +24,8 @@ class Test_Prestamos_Parametria(unittest.TestCase):
     def test_eliminar_linea_prestamo(self):
         driver = self.driver
 
-        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
-        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
+        find_and_send_keys_with_clear(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
+        find_and_send_keys_with_clear(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
         print("🔵 INGRESO CREDENCIALES")
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
         print("🔵 INGRESO A LA PLATAFORMA")
@@ -95,7 +38,7 @@ class Test_Prestamos_Parametria(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//i[@class='fas fa-search']"))
         print("🔵 CLICK EN LA LUPITA")
 
-        find_and_send_keys(driver, (By.XPATH, "//input[@id='descripcion']"), "Test Crear Linea Prestamo")
+        find_and_send_keys_with_clear(driver, (By.XPATH, "//input[@id='descripcion']"), "Test Crear Linea Prestamo")
         print("🔵 INGRESO DESCRIPCION REDUCIDA")
         
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Buscar']"))
@@ -111,7 +54,6 @@ class Test_Prestamos_Parametria(unittest.TestCase):
         print("🔵 CONFIRMO ELIMINAR")
         
         validar_mensaje_snackbar(driver, "Línea eliminada correctamente")
-
 
     def tearDown(self):
         test_fallo = False

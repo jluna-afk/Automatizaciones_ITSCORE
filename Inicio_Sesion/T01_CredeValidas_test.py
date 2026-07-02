@@ -1,4 +1,7 @@
 import unittest
+import time
+import os
+import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -6,35 +9,13 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-import time
-import os
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-def validar_mensaje(driver, mensaje_exito, wait_time=10):
-    try:
-        locator = (By.XPATH, f"//*[contains(text(), '{mensaje_exito}')]")
-        WebDriverWait(driver, wait_time).until(
-            EC.visibility_of_element_located(locator)
-        )
-        print(f"✅ Se inicio sesion correctamente: Se mostró el mensaje '{mensaje_exito}'.")
-    except TimeoutException:
-        print("❌ No se inicio sesion: No apareció el mensaje de éxito esperado.")
-    except Exception as e:
-        print(f"❌ Ocurrió un error en la validación del mensaje: {e}")
-
-def find_and_send_keys(driver, by_locator, value, wait_time=50):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.visibility_of_element_located(by_locator)
-    )
-    element.send_keys(value)
-    return element
-
-def find_and_click(driver, by_locator, wait_time=20):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.element_to_be_clickable(by_locator)
-    )
-    element.click()
-    return element
+from Pages.base_page import (
+    find_and_send_keys,
+    find_and_click
+)
 
 class TestLoginValido(unittest.TestCase):
     def setUp(self):
@@ -53,7 +34,6 @@ class TestLoginValido(unittest.TestCase):
             print("🔵 CLICK BOTON INGRESAR")
             time.sleep(2)
 
-        
             expected_home_url = "https://qa.itscore.its.com.ar/#/home"
       
             WebDriverWait(driver, 20).until(EC.url_to_be(expected_home_url))

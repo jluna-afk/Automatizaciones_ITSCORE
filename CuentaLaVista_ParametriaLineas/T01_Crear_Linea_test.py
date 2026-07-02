@@ -1,64 +1,20 @@
 import unittest
 import time
+import os
+import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-import os
 
-def find_and_send_keys(driver, by_locator, value, wait_time=50):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.visibility_of_element_located(by_locator)
-    )
-    element.send_keys(value)
-    return element
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-def find_and_click(driver, by_locator, wait_time=20):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.element_to_be_clickable(by_locator)
-    )
-    element.click()
-    return element
-
-def seleccionar_opcion_ng_select(driver, texto_opcion, wait_time=15):
-    try:
-        options_locator = (By.CSS_SELECTOR, "div.ng-option")
-        opciones = WebDriverWait(driver, wait_time).until(
-            EC.presence_of_all_elements_located(options_locator)
-        )
-        
-        for opcion in opciones:
-            if texto_opcion.lower() in opcion.text.lower():
-                driver.execute_script("arguments[0].click();", opcion)
-                return True
-        
-        return False
-    except TimeoutException:
-        return False
-
-def validar_mensaje_snackbar(driver, mensaje_exito, timeout=10):
-
-    try:
-        snackbar = WebDriverWait(driver, timeout).until(
-            EC.visibility_of_element_located(
-                (By.CSS_SELECTOR, "simple-snack-bar, .mat-mdc-snack-bar-label")
-            )
-        )
-
-        texto_capturado = snackbar.text.strip()
-
-        if mensaje_exito.lower() in texto_capturado.lower():
-            print(f"✅ EXITO: {texto_capturado}")
-        else:
-            print(f"❌ ERROR DETECTADO EN PANTALLA: {texto_capturado}")
-            raise AssertionError(f"Mensaje inesperado: {texto_capturado}")
-
-    except TimeoutException:
-        driver.save_screenshot("fallo_captura_mensaje.png")
-        raise AssertionError("No se detectó ningún mensaje Snackbar (Timeout)")
+from Pages.base_page import (
+    find_and_send_keys,
+    find_and_click,
+    seleccionar_opcion_ng_select_js,
+    validar_mensaje_snackbar
+)
 
 class TestLineasCuentaVista(unittest.TestCase):
     def setUp(self):
@@ -86,7 +42,7 @@ class TestLineasCuentaVista(unittest.TestCase):
         print("🔵 INGRESO DE LA DESCRIPCION REDUCIDA")
 
         find_and_click(driver, (By.XPATH, "//ng-select[@id='moneda']//input[@type='text']"))
-        seleccionar_opcion_ng_select(driver, "Pesos")
+        seleccionar_opcion_ng_select_js(driver, "Pesos")
         print("🔵 SELECCION DE MONEDA")
 
         find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='tna']"), "10")
@@ -96,7 +52,7 @@ class TestLineasCuentaVista(unittest.TestCase):
         print("🔵 INGRESO DEL TOPE")
 
         find_and_click(driver, (By.XPATH, "//ng-select[@id='liquidacion']//input[@type='text']"))
-        seleccionar_opcion_ng_select(driver, "Diario")
+        seleccionar_opcion_ng_select_js(driver, "Diario")
         print("🔵 SELECCION DE MONEDA")
 
         find_and_send_keys(driver, (By.XPATH, "//app-custom-date[@formcontrolname='fechaDesde']//input[@type='text']"), "25082025")

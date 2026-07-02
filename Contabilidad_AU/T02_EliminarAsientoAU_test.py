@@ -4,78 +4,16 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 import os
+import sys
 
-def find_and_send_keys(driver, by_locator, value, wait_time=50):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.visibility_of_element_located(by_locator)
-    )
-    element.send_keys(value)
-    return element
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-def find_and_click(driver, by_locator, wait_time=20):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.element_to_be_clickable(by_locator)
-    )
-    element.click()
-    return element
-
-def wait_and_click_js(driver, by_locator, wait_time=15):
-    try:
-        element = WebDriverWait(driver, wait_time).until(
-            EC.element_to_be_clickable(by_locator)
-        )
-        driver.execute_script("arguments[0].scrollIntoView(true);", element)
-        time.sleep(0.5)
-        driver.execute_script("arguments[0].click();", element)
-        return element
-    except TimeoutException:
-        print(f"❌ No se pudo hacer clic con JS en el elemento: {by_locator}")
-        raise
-
-def seleccionar_opcion_ng_select(driver, locator_input, texto_opcion, wait_time=10):
-    find_and_send_keys(driver, locator_input, texto_opcion, wait_time)
-    time.sleep(0.5) 
-    
-    try:
-        opciones = WebDriverWait(driver, wait_time).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.ng-option"))
-        )
-        
-        for opcion in opciones:
-            if texto_opcion.lower() in opcion.text.lower():
-                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", opcion)
-                opcion.click()
-                return True
-                
-        raise AssertionError(f"❌ Falló: No se encontró la opción '{texto_opcion}' en el desplegable filtrado.")
-        
-    except TimeoutException:
-         raise AssertionError(f"❌ Falló: Las opciones del desplegable nunca cargaron al buscar '{texto_opcion}'.")
-
-def validar_mensaje_snackbar(driver, mensaje_exito, timeout=10):
-
-    try:
-        snackbar = WebDriverWait(driver, timeout).until(
-            EC.visibility_of_element_located(
-                (By.CSS_SELECTOR, "simple-snack-bar, .mat-mdc-snack-bar-label")
-            )
-        )
-
-        texto_capturado = snackbar.text.strip()
-
-        if mensaje_exito.lower() in texto_capturado.lower():
-            print(f"✅ EXITO: {texto_capturado}")
-        else:
-            print(f"❌ ERROR DETECTADO EN PANTALLA: {texto_capturado}")
-            raise AssertionError(f"Mensaje inesperado: {texto_capturado}")
-
-    except TimeoutException:
-        driver.save_screenshot("fallo_captura_mensaje.png")
-        raise AssertionError("No se detectó ningún mensaje Snackbar (Timeout)")
+from Pages.base_page import (
+    find_and_send_keys,
+    find_and_click,
+    validar_mensaje_snackbar
+)
 
 class TestEliminarAsientoAutomatico(unittest.TestCase):
     def setUp(self):
@@ -106,10 +44,7 @@ class TestEliminarAsientoAutomatico(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Eliminar']"))
         print("🔵 CLICK EN ELIMINAR")
         
-        boton_eliminar = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[@class='col-5 btn-danger-its']"))
-        )
-        boton_eliminar.click()
+        find_and_click(driver, (By.XPATH, "//button[@class='col-5 btn-danger-its']"))
         print("🔵 CLICK EN BOTON ELIMINAR CONFIRMAR")
         
         validar_mensaje_snackbar(driver, "Se ha eliminado exitosamente")

@@ -1,87 +1,20 @@
 import unittest
+import time
+import os
+import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-import time
-import os
 
-def find_and_send_keys(driver, by_locator, value, wait_time=50):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.visibility_of_element_located(by_locator)
-    )
-    element.send_keys(value)
-    return element
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-def find_and_click(driver, by_locator, wait_time=20):
-    element = WebDriverWait(driver, wait_time).until(
-        EC.element_to_be_clickable(by_locator)
-    )
-    element.click()
-    return element
-
-def seleccionar_opcion_ng_select(driver, texto_opcion, wait_time=10):
-    try:
-        opciones = WebDriverWait(driver, wait_time).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.ng-option"))
-        )
-        for opcion in opciones:
-            if texto_opcion.lower() in opcion.text.lower():
-                opcion.click()
-                return True
-        return False
-    except Exception:
-        return False
-
-def validar_mensaje(driver, mensaje_exito, wait_time=10):
-    try:
-        locator = (By.XPATH, f"//*[contains(text(), '{mensaje_exito}')]")
-        WebDriverWait(driver, wait_time).until(
-            EC.visibility_of_element_located(locator)
-        )
-        print(f"✅ La persona se creo correctamente: Se mostró el mensaje '{mensaje_exito}'.")
-    except TimeoutException:
-        print("❌ La persona no se creo: No apareció el mensaje de éxito esperado.")
-    except Exception as e:
-        print(f"❌ Ocurrió un error en la validación del mensaje: {e}")
-
-def validar_mensaje_snackbar(driver, xpath_boton, mensaje_exito, timeout=5):
-    script = f"""
-    var callback = arguments[arguments.length - 1];
-    var boton = document.evaluate("{xpath_boton}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-    
-    var observer = new MutationObserver(function(mutations, obs) {{
-        var regions = document.querySelectorAll("div[id^='mat-snack-bar-container-live']");
-        regions.forEach(function(region) {{
-            var text = region.innerText.trim();
-            if (text.length > 0) {{
-                obs.disconnect();
-                callback(text);
-            }}
-        }});
-    }});
-
-    observer.observe(document.body, {{ childList: true, subtree: true }});
-    if (boton) {{ boton.click(); }}
-    setTimeout(function() {{ observer.disconnect(); callback(null); }}, {timeout * 1000});
-    """
-    
-    print("🔵 CLICK SEGUNDO BOTON ELIMINAR")
-    texto_capturado = driver.execute_async_script(script)
-    
-    if texto_capturado:
-        if mensaje_exito.lower() in texto_capturado.lower() or "éxito" in texto_capturado.lower():
-            print(f"✅ EXITO: {texto_capturado}")
-        else:
-            print(f"❌ ERROR DETECTADO EN PANTALLA: {texto_capturado}")
-            raise AssertionError(f"Fallo en la prueba: Se detectó un error en pantalla: {texto_capturado}")
-    else:
-        driver.save_screenshot("fallo_captura_mensaje.png")
-        print("❌ No se capturó ningún mensaje. Se guardó captura: fallo_captura_mensaje.png")
-        raise AssertionError("Fallo en la prueba: No se detectó ningún mensaje de confirmación o error (Timeout)")
+from Pages.base_page import (
+    find_and_send_keys,
+    find_and_click,
+    seleccionar_opcion_ng_select_js,
+    validar_mensaje_snackbar_async_crear
+)
 
 class TestPersonaGestion(unittest.TestCase):
     def setUp(self):
@@ -143,17 +76,17 @@ class TestPersonaGestion(unittest.TestCase):
         find_and_click(driver, (By.CSS_SELECTOR, "ng-select#localidad div[role='combobox']"))
         find_and_send_keys(driver, (By.CSS_SELECTOR, "ng-select#localidad div[role='combobox'] input[type='text']"), "Stephenson")
         time.sleep(1)  
-        seleccionar_opcion_ng_select(driver, "Stephenson - (2103)")
+        seleccionar_opcion_ng_select_js(driver, "Stephenson - (2103)")
         print("🔵 INGRESO CIUDAD")
 
         find_and_click(driver, (By.XPATH, "(//ng-select[@id='tipo'])[1]//input[@type='text']"))
-        seleccionar_opcion_ng_select(driver, "Telefono movil")
+        seleccionar_opcion_ng_select_js(driver, "Telefono movil")
         find_and_send_keys(driver, (By.XPATH, "(//input[@id='dato'])[1]"), "3416956694")
         print("🔵 INGRESO TELEFONO")
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='+ Agregar medio de comunicación']"))
         find_and_click(driver, (By.XPATH, "(//ng-select[@id='tipo'])[2]//input[@type='text']"))
-        seleccionar_opcion_ng_select(driver, "Correo electronico")
+        seleccionar_opcion_ng_select_js(driver, "Correo electronico")
         find_and_send_keys(driver, (By.XPATH, "(//input[@id='dato'])[2]"), "jluna@quo.ar")
         print("🔵 INGRESO CORREO ELECTRONICO")
 
@@ -162,11 +95,11 @@ class TestPersonaGestion(unittest.TestCase):
         find_and_send_keys(driver, (By.XPATH, "//input[@id='alias']"), "Jagger.luna")
         print("🔵 INGRESO ALIAS")
         find_and_click(driver, (By.XPATH, "//ng-select[@id='estado']//input[@type='text']"))
-        seleccionar_opcion_ng_select(driver, "Activa")
+        seleccionar_opcion_ng_select_js(driver, "Activa")
         print("🔵 INGRESO ESTADO")
 
         find_and_click(driver, (By.XPATH, "//ng-select[@id='empresa']//input[@type='text']"))
-        seleccionar_opcion_ng_select(driver, "Activos Provinciales Santa Fe")
+        seleccionar_opcion_ng_select_js(driver, "Activos Provinciales Santa Fe")
         print("🔵 INGRESO ENTIDAD COBRO")
         find_and_send_keys(driver, (By.XPATH, "//input[@id='identificadorDescuento']"), "123456789")
         print("🔵 INGRESO ID DE DESCUENTO")
@@ -174,15 +107,15 @@ class TestPersonaGestion(unittest.TestCase):
         find_and_send_keys(driver, (By.XPATH, "//input[@id='sueldo_neto']"), "1000000")
         print("🔵 INGRESO SUELDOS")
         find_and_click(driver, (By.XPATH, "//ng-select[@id='estado']//div[@class='ng-select-container']//input[@type='text']"))
-        seleccionar_opcion_ng_select(driver, "Activo")
+        seleccionar_opcion_ng_select_js(driver, "Activo")
         print("🔵 INGRESO ESTADO LEGAJO")
         
         find_and_click(driver, (By.CSS_SELECTOR, "ng-select[id='actividad'] input[type='text']"))
         find_and_send_keys(driver, (By.CSS_SELECTOR, "ng-select[id='actividad'] input[type='text']"), "monotributista")
-        seleccionar_opcion_ng_select(driver, "Monotributista")
+        seleccionar_opcion_ng_select_js(driver, "Monotributista")
         print("🔵 INGRESO ACTIVIDAD")
 
-        validar_mensaje_snackbar(driver, "//button[normalize-space()='Crear']", "Persona ingresada o actualizada exitosamente")
+        validar_mensaje_snackbar_async_crear(driver, "//button[normalize-space()='Crear']", "Persona ingresada o actualizada exitosamente")
 
     def tearDown(self):
         test_fallo = False

@@ -98,8 +98,23 @@ class TestGrupoAfinidad(unittest.TestCase):
         find_and_click(driver, (By.LINK_TEXT, "Grupos de afinidad"))
         print("🔵 INGRESO AL MODULO")
 
-        find_and_click_js(driver, (By.XPATH, "//body[1]/app-root[1]/app-main[1]/div[1]/app-grupos-afinidad[1]/div[1]/form[1]/div[4]/table[1]/tbody[1]/tr[7]/td[4]"))
-        print("🔵 DESPLIEGUE DEL GRUPO")
+        time.sleep(0.5)
+
+        filas = driver.find_elements(By.XPATH, "//tr[contains(@class, 'tr-body')]")
+        encontrado = False
+
+        for fila in filas:
+            input_desc = fila.find_element(By.XPATH, ".//input[@formcontrolname='descripcion']")
+            if input_desc.get_attribute("value") == "Prueba":
+                chevron = fila.find_element(By.XPATH, ".//i[contains(@class, 'fa-chevron-down')]")
+                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", chevron)
+                chevron.click()
+                encontrado = True
+                print("🔵 DESPLIEGUE DEL GRUPO (Encontrado dinámicamente)")
+                break
+
+        if not encontrado:
+            raise RuntimeError("❌ No se pudo encontrar ninguna fila con la descripción 'Prueba'")
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Eliminar']"))
         print("🔵 CLICK PRIMER ELIMINAR")
