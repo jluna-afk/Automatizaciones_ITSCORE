@@ -163,11 +163,15 @@ def find_and_force_click(driver, by_locator, wait_time=20):
 # ==============================================================================
 
 def click_checkbox(driver, locator, wait_time=10):
-    """Variante Checkbox Visibilidad: Espera visibilidad, centra pantalla y hace clic por JS."""
     try:
-        checkbox = WebDriverWait(driver, wait_time).until(EC.visibility_of_element_located(locator))
+        checkbox = WebDriverWait(driver, wait_time).until(
+            EC.presence_of_element_located(locator)
+        )
         driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
-        driver.execute_script("arguments[0].click();", checkbox)
+        driver.execute_script(
+            "arguments[0].click(); arguments[0].dispatchEvent(new Event('change'));", 
+            checkbox
+        )
         print(f"🔵 Hizo clic en el checkbox: {locator}")
     except TimeoutException:
         print(f"❌ No se encontró el checkbox con el localizador: {locator}")
@@ -244,16 +248,25 @@ def seleccionar_opcion_ng_select_js(driver, texto_opcion, wait_time=15):
 # 5. VARIANTES DE COPIAR IMPORTE
 # ==============================================================================
 
+
 def copiar_y_pegar_importe_3(driver, wait_time=10):
-    """Lee el importe total desde el campo '#importe3' e inyecta el valor en el último campo de cobro activo por JS."""
     campo_total = WebDriverWait(driver, wait_time).until(
         EC.presence_of_element_located((By.XPATH, "//input[@id='importe3']"))
     )
     valor_copiado = campo_total.get_attribute("value") 
+    
+    valor_copiado = valor_copiado.replace("$", "").replace(".", "").strip()
+    
     campo_cobro = WebDriverWait(driver, wait_time).until(
         EC.presence_of_element_located((By.XPATH, "(//input[@formcontrolname='importe'])[last()]"))
     )
-    driver.execute_script("arguments[0].value = arguments[1]; arguments[0].dispatchEvent(new Event('input'));", campo_cobro, valor_copiado)
+    
+    driver.execute_script(
+        "arguments[0].value = arguments[1]; "
+        "arguments[0].dispatchEvent(new Event('input')); "
+        "arguments[0].dispatchEvent(new Event('change'));", 
+        campo_cobro, valor_copiado
+    )
     return campo_cobro
 
 
