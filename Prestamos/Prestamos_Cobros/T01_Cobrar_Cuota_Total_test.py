@@ -4,8 +4,7 @@ import time
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
+
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
@@ -14,13 +13,13 @@ from Pages.base_page import (
     find_and_click,
     seleccionar_opcion_ng_select,
     copiar_y_pegar_importe_3,
-    find_and_click_check_disabled,
+    click_checkbox,
     validar_mensaje_snackbar
 )
 
 class Test_Prestamos_Cobros(unittest.TestCase):
     def setUp(self):
-        self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+        self.driver = webdriver.Chrome()
         self.driver.maximize_window()
         self.driver.get("http://qa.itscore.its.com.ar:3080/#/login")
 
@@ -49,15 +48,15 @@ class Test_Prestamos_Cobros(unittest.TestCase):
         
         find_and_click(driver, (By.XPATH, "//td[normalize-space()='224']"))
         print("🔵 SELECCION PRESTAMO 224")
+        time.sleep(0.5)
 
         find_and_click(driver, (By.XPATH, "//ng-select[@id='tipoPago']"))
         seleccionar_opcion_ng_select(driver, "COBRO CUOTA TOTAL (2)")
         print("🔵 SELECCION TIPO DE COBRO")
-        time.sleep(1.5)
 
-        find_and_click_check_disabled(driver, (By.XPATH, "(//input[@formcontrolname='pagar_cuota'])[1]"))
+        click_checkbox(driver, (By.XPATH, "(//input[@formcontrolname='pagar_cuota'])[1]"))
         print("🔵 SELECCION DE CUOTA")
-        time.sleep(1.0)
+        # time.sleep(1.0)
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Continuar']"))
         print("🔵 CLICK BOTON CONTINUAR")

@@ -249,6 +249,33 @@ def seleccionar_opcion_ng_select_js(driver, texto_opcion, wait_time=15):
 # ==============================================================================
 
 
+def copiar_y_pegar_importe_6(driver, wait_time=10):
+    time.sleep(0.5)
+    
+    campo_total = WebDriverWait(driver, wait_time).until(
+        EC.presence_of_element_located((By.XPATH, "//input[@id='importe6']"))
+    )
+    valor_copiado = campo_total.get_attribute("value")
+    valor_limpio = valor_copiado.replace("$", "").replace(".", "").strip()
+    
+    for _ in range(3):
+        try:
+            campo_cobro = WebDriverWait(driver, wait_time).until(
+                EC.presence_of_element_located((By.XPATH, "(//input[@formcontrolname='importe'])[last()]"))
+            )
+            
+            driver.execute_script(
+                "arguments[0].value = arguments[1]; "
+                "arguments[0].dispatchEvent(new Event('input')); "
+                "arguments[0].dispatchEvent(new Event('change'));", 
+                campo_cobro, valor_limpio
+            )
+            return campo_cobro
+        except StaleElementReferenceException:
+            time.sleep(0.5)
+            
+    raise StaleElementReferenceException("El campo de cobro cambio en el DOM repetidamente y no se pudo completar la accion.")
+
 def copiar_y_pegar_importe_3(driver, wait_time=10):
     campo_total = WebDriverWait(driver, wait_time).until(
         EC.presence_of_element_located((By.XPATH, "//input[@id='importe3']"))
