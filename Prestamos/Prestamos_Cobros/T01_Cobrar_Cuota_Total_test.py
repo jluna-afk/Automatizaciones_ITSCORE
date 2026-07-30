@@ -56,7 +56,6 @@ class Test_Prestamos_Cobros(unittest.TestCase):
 
         click_checkbox(driver, (By.XPATH, "(//input[@formcontrolname='pagar_cuota'])[1]"))
         print("🔵 SELECCION DE CUOTA")
-        # time.sleep(1.0)
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Continuar']"))
         print("🔵 CLICK BOTON CONTINUAR")
