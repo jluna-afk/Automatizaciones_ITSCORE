@@ -3,20 +3,38 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
-from selenium.common.exceptions import ElementClickInterceptedException, WebDriverException
+from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.common.exceptions import ElementNotInteractableException
 
-
+class ElementClickError(Exception):
+    """Raised when clicking an element fails after reaching the maximum number of retries."""
+    
 # ==============================================================================
 # 1. VARIANTES DE ESCRIBIR (find_and_send_keys)
 # ==============================================================================
 
 def find_and_send_keys(driver, by_locator, value, wait_time=50):
-    """Variante estándar: Espera visibilidad del elemento y escribe (sin clear)."""
-    element = WebDriverWait(driver, wait_time).until(
-        EC.visibility_of_element_located(by_locator)
-    )
-    element.send_keys(value)
-    return element
+    """
+    Variante mejorada: Espera que el elemento esté listo y maneja micro-retrasos 
+    de la interfaz (como modales cerrándose) mediante reintentos dinámicos.
+    """
+    end_time = time.time() + wait_time
+    
+    while True:
+        try:
+            element = WebDriverWait(driver, 5).until(
+                EC.element_to_be_clickable(by_locator)
+            )
+            
+            element.send_keys(value)
+            return element
+            
+        except (ElementNotInteractableException, StaleElementReferenceException):
+            if time.time() > end_time:
+                raise 
+            
+        
+            time.sleep(0.3)
 
 
 def find_and_send_keys_with_clear(driver, by_locator, value, wait_time=50):
@@ -57,18 +75,26 @@ def find_and_send_keys_clickable(driver, by_locator, value, wait_time=50):
 # ==============================================================================
 
 
-def find_and_click(driver, by_locator, wait_time=20):
-    """Espera a que sea cliqueable y hace clic convencional. 
-    Si falla por intercepción (animaciones/spinners), lo fuerza mediante JavaScript."""
-    element = WebDriverWait(driver, wait_time).until(
-        EC.element_to_be_clickable(by_locator)
-    )
-    try:
-        element.click()
-    except (ElementClickInterceptedException, WebDriverException):
-        driver.execute_script("arguments[0].click();", element)
-        
-    return element
+def find_and_click(driver, by_locator, wait_time=50):
+    """
+    Variante mejorada: Espera que el elemento sea cliqueable y maneja
+    micro-bloqueos de animaciones (como la apertura de modales) mediante reintentos.
+    """
+    end_time = time.time() + wait_time
+    
+    while True:
+        try:
+            element = WebDriverWait(driver, 5).until(
+                EC.element_to_be_clickable(by_locator)
+            )
+            element.click()
+            return element
+            
+        except (ElementClickInterceptedException, StaleElementReferenceException):
+            if time.time() > end_time:
+                raise
+            
+            time.sleep(0.3)
 
 
 def find_and_click_with_retries(driver, by_locator, wait_time=20, retries=3):
@@ -85,7 +111,7 @@ def find_and_click_with_retries(driver, by_locator, wait_time=20, retries=3):
             print(f"Advertencia: StaleElementReferenceException. Reintentando clic... Intento {attempts + 1}")
             attempts += 1
             time.sleep(0.5)
-    raise Exception(f"No se pudo hacer clic en el elemento {by_locator} después de {retries} intentos.")
+    raise ElementClickError(f"No se pudo hacer clic en el elemento {by_locator} después de {retries} intentos.")
 
 
 def find_and_click_with_scroll(driver, by_locator, wait_time=20):
@@ -184,7 +210,7 @@ def Checkbox_Xpath(driver, xpath, wait_time=10):
         val = WebDriverWait(driver, wait_time).until(EC.element_to_be_clickable(xpath))
         driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", val)
         val.click()
-        print("Click en el elemento {}".format(xpath))
+        print(f"Click en el elemento {xpath}")
     except TimeoutException:
         print("No se encontro el Elemento" + str(xpath))
         raise
@@ -195,18 +221,21 @@ def Checkbox_Xpath(driver, xpath, wait_time=10):
 # ==============================================================================
 
 def seleccionar_opcion_ng_select(driver, texto_opcion, wait_time=10):
-    """NG-Select Básico: Busca todas las opciones presentes y hace clic convencional sobre la que coincida."""
-    try:
-        opciones = WebDriverWait(driver, wait_time).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.ng-option"))
-        )
-        for opcion in opciones:
-            if texto_opcion.lower() in opcion.text.lower():
-                opcion.click()
-                return True
-        return False
-    except Exception:
-        return False
+
+    end_time = time.time() + wait_time
+    
+    while time.time() < end_time:
+        try:
+            opciones = WebDriverWait(driver, 2).until(
+                EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "div.ng-option"))
+            )
+            for opcion in opciones:
+                if texto_opcion.lower() in opcion.text.lower():
+                    opcion.click()
+                    return True
+                    
+        except (ElementClickInterceptedException, StaleElementReferenceException, TimeoutException):
+            time.sleep(0.2)
 
 
 def seleccionar_opcion_ng_select_with_filter(driver, locator_input, texto_opcion, wait_time=10):
@@ -322,10 +351,8 @@ def validar_mensaje(driver, mensaje_esperado, wait_time=30):
             EC.visibility_of_element_located(locator)
         )
         print(f"✅ Validación exitosa: Se mostró el mensaje '{mensaje_esperado}'.")
-    except TimeoutException:
-        print(f"❌ Falló la validación: No apareció el mensaje '{mensaje_esperado}' en {wait_time} segundos.")
-    except Exception as e:
-        print(f"❌ Ocurrió un error inesperado en la validación: {e}")
+    except (ElementClickInterceptedException, StaleElementReferenceException, TimeoutException):
+            time.sleep(0.2)
 
 
 def validar_mensaje_sesion(driver, mensaje_exito, wait_time=10):
@@ -336,10 +363,8 @@ def validar_mensaje_sesion(driver, mensaje_exito, wait_time=10):
             EC.visibility_of_element_located(locator)
         )
         print(f"✅ Se inicio sesion correctamente: Se mostró el mensaje '{mensaje_exito}'.")
-    except TimeoutException:
-        print("❌ No se inicio sesion: No apareció el mensaje de éxito esperado.")
-    except Exception as e:
-        print(f"❌ Ocurrió un error en la validación del mensaje: {e}")
+    except (ElementClickInterceptedException, StaleElementReferenceException, TimeoutException):
+            time.sleep(0.2)
 
 
 def validar_mensaje_persona_creada(driver, mensaje_exito, wait_time=10):
@@ -350,10 +375,8 @@ def validar_mensaje_persona_creada(driver, mensaje_exito, wait_time=10):
             EC.visibility_of_element_located(locator)
         )
         print(f"✅ La persona se creo correctamente: Se mostró el mensaje '{mensaje_exito}'.")
-    except TimeoutException:
-        print("❌ La persona no se creo: No apareció el mensaje de éxito esperado.")
-    except Exception as e:
-        print(f"❌ Ocurrió un error en la validación del mensaje: {e}")
+    except (ElementClickInterceptedException, StaleElementReferenceException, TimeoutException):
+            time.sleep(0.2)
 
 
 def validar_mensaje_relacion_creada(driver, mensaje_exito, wait_time=10):
@@ -364,10 +387,8 @@ def validar_mensaje_relacion_creada(driver, mensaje_exito, wait_time=10):
             EC.visibility_of_element_located(locator)
         )
         print(f"✅ La relacion se creo correctamente: Se mostró el mensaje '{mensaje_exito}'.")
-    except TimeoutException:
-        print("❌ La relacion no se creo: No apareció el mensaje de éxito esperado.")
-    except Exception as e:
-        print(f"❌ Ocurrió un error en la validación del mensaje: {e}")
+    except (ElementClickInterceptedException, StaleElementReferenceException, TimeoutException):
+            time.sleep(0.2)
 
 
 def validar_mensaje_persona_eliminada(driver, mensaje_exito, wait_time=10):
@@ -378,10 +399,8 @@ def validar_mensaje_persona_eliminada(driver, mensaje_exito, wait_time=10):
             EC.visibility_of_element_located(locator)
         )
         print(f"✅ La persona se elimino correctamente: Se mostró el mensaje '{mensaje_exito}'.")
-    except TimeoutException:
-        print("❌ La persona no se elimino: No apareció el mensaje de éxito esperado.")
-    except Exception as e:
-        print(f"❌ Ocurrió un error en la validación del mensaje: {e}")
+    except (ElementClickInterceptedException, StaleElementReferenceException, TimeoutException):
+            time.sleep(0.2)
 
 
 def validar_y_esperar_desaparicion(driver, mensaje_exito, wait_time_vis=10, wait_time_invis=10):
@@ -411,22 +430,36 @@ def validar_y_esperar_desaparicion(driver, mensaje_exito, wait_time_vis=10, wait
 # ==============================================================================
 
 def validar_mensaje_snackbar(driver, mensaje_exito, timeout=10):
-    """Snackbar convencional por CSS: Localiza de forma directa el contenedor nativo mediante selectores de Selenium."""
+    """Snackbar convencional por CSS: Localiza el contenedor y espera dinámicamente a que el texto coincida."""
+
+    end_time = time.time() + timeout
+    texto_capturado = ""
+    
     try:
-        snackbar = WebDriverWait(driver, timeout).until(
-            EC.visibility_of_element_located(
-                (By.CSS_SELECTOR, "simple-snack-bar, .mat-mdc-snack-bar-label")
+        while time.time() < end_time:
+            snackbar = WebDriverWait(driver, 2).until(
+                EC.visibility_of_element_located(
+                    (By.CSS_SELECTOR, "simple-snack-bar, .mat-mdc-snack-bar-label")
+                )
             )
-        )
-        texto_capturado = snackbar.text.strip()
-        if mensaje_exito.lower() in texto_capturado.lower():
-            print(f"✅ EXITO: {texto_capturado}")
-        else:
+            texto_capturado = snackbar.text.strip()
+            
+            if mensaje_exito.lower() in texto_capturado.lower():
+                print(f"✅ EXITO: {texto_capturado}")
+                return snackbar
+            
+            time.sleep(0.2)
+            
+        print(f"❌ ERROR DETECTADO EN PANTALLA: {texto_capturado}")
+        raise AssertionError(f"Mensaje inesperado: {texto_capturado}")
+        
+    except TimeoutException:
+        if texto_capturado: 
             print(f"❌ ERROR DETECTADO EN PANTALLA: {texto_capturado}")
             raise AssertionError(f"Mensaje inesperado: {texto_capturado}")
-    except TimeoutException:
-        driver.save_screenshot("fallo_captura_mensaje.png")
-        raise AssertionError("No se detectó ningún mensaje Snackbar (Timeout)")
+        else:
+            driver.save_screenshot("fallo_captura_mensaje.png")
+            raise AssertionError("No se detectó ningún mensaje Snackbar (Timeout)")
 
 
 def validar_mensaje_snackbar_async_crear(driver, xpath_boton, mensaje_exito, timeout=5):

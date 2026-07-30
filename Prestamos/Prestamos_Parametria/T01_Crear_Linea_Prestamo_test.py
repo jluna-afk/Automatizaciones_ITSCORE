@@ -33,7 +33,6 @@ class Test_Prestamos_Parametria(unittest.TestCase):
         print("🔵 INGRESO A LA PLATAFORMA")
 
         find_and_click(driver, (By.LINK_TEXT, "Préstamos"))
-        find_and_click(driver, (By.LINK_TEXT, "Amortizable"))
         find_and_click(driver, (By.LINK_TEXT, "Parametría"))
         find_and_click(driver, (By.LINK_TEXT, "Líneas"))
         print("🔵 INGRESO AL MODULO DE PRESTAMOS PARAMETRIA")

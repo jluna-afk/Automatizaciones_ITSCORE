@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import unittest
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -41,8 +42,9 @@ class Test_Prestamos_Gestion(unittest.TestCase):
 
         find_and_click(driver, (By.XPATH, "//td[normalize-space()='PRESTAMO AMORTIZABLE']"))
         print("🔵 SELECCION PRESTAMO")
+        time.sleep(0.5)
 
-        find_and_click(driver, (By.XPATH, "//div[@class='col-md-4']//i[@class='fas fa-search']"))
+        find_and_click(driver, (By.XPATH, "//input[@id='persona']/following-sibling::button"))
         print("🔵 CLICK EN LA LUPITA PERSONA")
 
         find_and_send_keys(driver, (By.XPATH, "//input[@id='id_apellido_nombre']"), "coudsi")
@@ -66,11 +68,12 @@ class Test_Prestamos_Gestion(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//span[normalize-space()='TELEPAGOS']"))
         print("🔵 SELECCION VENDEDOR")
 
-        find_and_click(driver, (By.XPATH, "//div[@class='col-md-3']//i[@class='fas fa-search']"))
+        find_and_click(driver, (By.XPATH, "//input[@id='entidad']/following-sibling::button"))
         print("🔵 CLICK EN LA LUPITA ENTIDAD COBRO")
 
         find_and_click(driver, (By.XPATH, "//td[normalize-space()='Activos Provinciales Santa Fe']"))
         print("🔵 SELECCION ENTIDAD COBRO")
+        time.sleep(0.5)
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Crear']"))
         print("🔵 CLICK EN CREAR")
@@ -79,19 +82,16 @@ class Test_Prestamos_Gestion(unittest.TestCase):
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Aprobar']"))
         print("🔵 CLICK EN APROBAR")
-        time.sleep(0.5)
 
         validar_mensaje_snackbar(driver, "Préstamo aprobado correctamente.")
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Desaprobar']"))
         print("🔵 CLICK EN DESAPROBAR")
-        time.sleep(0.5)
 
         validar_mensaje_snackbar(driver, "Préstamo desaprobado correctamente.")
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Aprobar']"))
         print("🔵 CLICK EN APROBAR")
-        time.sleep(0.5)
 
         validar_mensaje_snackbar(driver, "Préstamo aprobado correctamente.")
 
@@ -103,7 +103,6 @@ class Test_Prestamos_Gestion(unittest.TestCase):
         print("🔵 SELECCION DE FORMA DE PAGO")
 
         find_and_click(driver, (By.XPATH, "//ng-select[@id='cuentaDestino']"))
-        time.sleep(0.5)
         seleccionar_opcion_ng_select(driver, "PROV GASTOS VARIOS")
         print("🔵 SELECCION DE CUENTA DESTINO")
 
@@ -112,7 +111,6 @@ class Test_Prestamos_Gestion(unittest.TestCase):
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Aceptar']"))
         print("🔵 CLICK EN ACEPTAR")
-        time.sleep(0.5)
 
         validar_mensaje_snackbar(driver, "Préstamo liquidado correctamente")
 
