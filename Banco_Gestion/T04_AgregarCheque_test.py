@@ -24,8 +24,8 @@ class TestAgregarCheque(unittest.TestCase):
 
         self.generador_cheques = ContadorSecuencial(
             archivo_contador="contador_cheque.txt",
-            min_valor=17,
-            max_valor=50
+            min_valor=55555555555555555555555555555,
+            max_valor=99999999999999999999999999999
         )
 
     def test_agregar_cheque(self):
@@ -54,12 +54,16 @@ class TestAgregarCheque(unittest.TestCase):
         input_numero_cheque = (By.XPATH, "//tbody/tr[last()]//input[@id='numero']")
         find_and_send_keys(driver, input_numero_cheque, numero_cheque_unico)
         print("🔵INGRESANDO NUMERO CHEQUE")
+
+        find_and_send_keys(driver, (By.XPATH, "//tbody/tr[last()]/td[2]//input"), "Cheque de prueba")
+        print("🔵INGRESANDO DESCRIPCION")
+
+        find_and_send_keys(driver, (By.XPATH, "//tbody/tr[last()]/td[3]//input"), "Cheque de prueba")
+        print("🔵INGRESANDO CONCEPTO")
         
         find_and_send_keys(driver, (By.XPATH, "//tbody/tr[last()]/td[4]//app-custom-date//input"), "31/12/2027")
         print("🔵INGRESANDO FECHA VENCIMIENTO")
 
-        find_and_click_with_retries(driver, (By.XPATH, "(//button[@type='button'][normalize-space()='Guardar'])[2]"))
-        print("🔵CLICK BOTON GUARDAR")
 
         validar_mensaje_snackbar_async_guardar_boton(driver, "//button[@type='submit']", "Chequera actualizada correctamente")
 
