@@ -1,5 +1,4 @@
 import unittest
-import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -58,7 +57,7 @@ class TestCrearCuentaBanco(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Crear']"))
         print("🔵 CLICK BOTON CREAR")
 
-        validar_mensaje_snackbar_async_crear(driver, "//button[normalize-space()='Aceptar']", "La cuenta se creó correctamente.")
+        validar_mensaje_snackbar_async_crear(driver, "//button[normalize-space()='Aceptar']", "La cuenta se creó correctamenteeeeee.")
 
     def tearDown(self):
         test_fallo = False
@@ -82,8 +81,7 @@ class TestCrearCuentaBanco(unittest.TestCase):
             if not os.path.exists(carpeta_screenshots):
                 os.makedirs(carpeta_screenshots)
             
-            timestamp = time.strftime("%Y%m%d_%H%M%S")
-            nombre_archivo = f"{nombre_test}_{timestamp}.png"
+            nombre_archivo = f"{nombre_test}.png"
             ruta_completa = os.path.join(carpeta_screenshots, nombre_archivo)
             
             self.driver.save_screenshot(ruta_completa)

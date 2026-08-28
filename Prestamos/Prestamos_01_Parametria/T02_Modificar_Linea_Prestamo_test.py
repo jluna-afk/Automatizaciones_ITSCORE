@@ -128,8 +128,7 @@ class Test_Prestamos_Parametria(unittest.TestCase):
             if not os.path.exists(carpeta_screenshots):
                 os.makedirs(carpeta_screenshots)
             
-            timestamp = time.strftime("%Y%m%d_%H%M%S")
-            nombre_archivo = f"{nombre_test}_{timestamp}.png"
+            nombre_archivo = f"{nombre_test}.png"
             ruta_completa = os.path.join(carpeta_screenshots, nombre_archivo)
             
             self.driver.save_screenshot(ruta_completa)

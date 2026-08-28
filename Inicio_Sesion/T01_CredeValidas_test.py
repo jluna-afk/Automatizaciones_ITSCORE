@@ -42,9 +42,7 @@ class TestLoginValido(unittest.TestCase):
             current_url = driver.current_url
             print(f"❌ Login fallido: La URL esperada era '{expected_home_url}', pero la actual es '{current_url}'.")
             self.fail(f"La URL no cambió a la página de inicio después del login. URL actual: {current_url}")
-        except Exception as e:
-            print(f"❌ Ocurrió un error inesperado durante la validación de la URL: {e}")
-            self.fail(f"Error inesperado: {e}")
+     
 
     def tearDown(self):
         test_fallo = False
@@ -68,8 +66,7 @@ class TestLoginValido(unittest.TestCase):
             if not os.path.exists(carpeta_screenshots):
                 os.makedirs(carpeta_screenshots)
             
-            timestamp = time.strftime("%Y%m%d_%H%M%S")
-            nombre_archivo = f"{nombre_test}_{timestamp}.png"
+            nombre_archivo = f"{nombre_test}.png"
             ruta_completa = os.path.join(carpeta_screenshots, nombre_archivo)
             
             self.driver.save_screenshot(ruta_completa)
