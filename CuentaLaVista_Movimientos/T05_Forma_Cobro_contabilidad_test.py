@@ -13,6 +13,7 @@ from Pages.base_page import (
     find_and_send_keys,
     find_and_click_check_disabled,
     seleccionar_opcion_ng_select_js,
+    find_and_click,
     validar_mensaje_snackbar
 )
 
@@ -38,15 +39,11 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         find_and_click_check_disabled(driver, (By.XPATH, "//span[@class='chevron rotated']//i[@class='fas fa-chevron-down']"))
         print("🔵 CLICK PARA OCULTAR MENU")
 
-        find_and_click_check_disabled(driver, (By.XPATH, "//ng-select[@id='linea']//input[@type='text']"))
-        seleccionar_opcion_ng_select_js(driver, "CUENTAS COMERCIALES")
-        print("🔵 SELECCION DE LINEA")
+        find_and_click(driver, (By.XPATH, "//input[@formcontrolname='numeroCuenta']/following-sibling::button"))
+        print("🔵 CLICK EN LA LUPITA DE BUSCAR CUENTA")
 
-        find_and_click_check_disabled(driver, (By.XPATH, "(//button[@type='button'])[1]"))
-        print("🔵 CLICK EN LA LUPITA DE BUSQUEDA DE PERSONA")
-
-        find_and_click_check_disabled(driver, (By.XPATH, "//td[normalize-space()='QUO SOLUCIONES SRL']"))
-        print("🔵 SELECCION DE PERSONA")
+        find_and_click(driver, (By.XPATH, "//td[normalize-space()='QUO SOLUCIONES SRL']"))
+        print("🔵 SELECCION DE CUENTA")
 
         find_and_click_check_disabled(driver, (By.XPATH, "//ng-select[@id='operacion']//input[@type='text']"))
         seleccionar_opcion_ng_select_js(driver, "COBRO DE FACTURA")
@@ -72,6 +69,9 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         print("🔵 CLICK EN ACEPTAR PARA CONFIRMAR EL MOVIMIENTO")
 
         validar_mensaje_snackbar(driver, "Movimiento confirmado con éxito!")
+
+        find_and_click_check_disabled(driver, (By.LINK_TEXT, "Cuentas a la vista"))
+        time.sleep(1)
 
         find_and_click_check_disabled(driver, (By.LINK_TEXT, "Contabilidad"))
         find_and_click_check_disabled(driver, (By.LINK_TEXT, "Movimientos"))

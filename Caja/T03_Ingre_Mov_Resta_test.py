@@ -35,10 +35,6 @@ class TestCaja_Mov_Resta(unittest.TestCase):
         find_and_click(driver, (By.LINK_TEXT, "Puesto"))
         print("🔵 INGRESO MODULO CAJA")
 
-        find_and_click(driver, (By.XPATH, "//ng-select[@id='cajaAsignada']//input[@type='text']"))
-        seleccionar_opcion_ng_select(driver, "Caja 3")
-        print("🔵 SELECCION DE CAJA")
-
         find_and_send_keys(driver, (By.XPATH, "//input[@id='operacion']"), "96")
         print("🔵 INGRESO CODIGO DE OPERACION")
 

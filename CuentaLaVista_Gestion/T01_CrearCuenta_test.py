@@ -35,8 +35,11 @@ class TestCuentaVistaGestion(unittest.TestCase):
         find_and_click(driver, (By.LINK_TEXT, "Gestión"))
         print("🔵 INGRESO AL MODULO DE CUENTA A LA VISTA GESTION")
 
-        find_and_click(driver, (By.XPATH, "(//input[@type='text'])[1]"))
-        seleccionar_opcion_ng_select_js(driver, "PROV AGUA")
+
+        find_and_click(driver, (By.XPATH, "//div[@class='input-container']//button[@type='button']//i[@class='fas fa-search']"))
+        find_and_send_keys(driver, (By.XPATH, "//input[@id='descripcion']"), "capacitaciones")
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Buscar']"))
+        find_and_click(driver, (By.XPATH, "//td[normalize-space()='PROV CAPACITACIONES']"))
         print("🔵 SELECCION DE LINEA")
 
         find_and_click(driver, (By.XPATH, "//ng-select[@id='tipoPersona']//input[@type='text']"))

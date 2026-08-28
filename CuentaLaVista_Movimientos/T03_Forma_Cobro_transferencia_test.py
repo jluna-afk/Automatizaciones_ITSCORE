@@ -35,15 +35,11 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         find_and_click(driver, (By.LINK_TEXT, "Movimientos"))
         print("🔵 INGRESO A MOVIMIENTOS DE CUENTA A LA VISTA")
 
-        find_and_click(driver, (By.XPATH, "//ng-select[@id='linea']//input[@type='text']"))
-        seleccionar_opcion_ng_select_js(driver, "CUENTAS COMERCIALES")
-        print("🔵 SELECCION DE LINEA")
-
-        find_and_click(driver, (By.XPATH, "(//button[@type='button'])[1]"))
-        print("🔵 CLICK EN LA LUPITA DE BUSQUEDA DE PERSONA")
+        find_and_click(driver, (By.XPATH, "//input[@formcontrolname='numeroCuenta']/following-sibling::button"))
+        print("🔵 CLICK EN LA LUPITA DE BUSCAR CUENTA")
 
         find_and_click(driver, (By.XPATH, "//td[normalize-space()='QUO SOLUCIONES SRL']"))
-        print("🔵 SELECCION DE PERSONA")
+        print("🔵 SELECCION DE CUENTA")
 
         find_and_click(driver, (By.XPATH, "//ng-select[@id='operacion']//input[@type='text']"))
         seleccionar_opcion_ng_select_js(driver, "COBRO DE FACTURA")
@@ -65,16 +61,19 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//div[@class='input-container-search position-relative w-100']//i[@class='fas fa-search']"))
         print("🔵 CLICK EN LUPITA DE OPERACIONES A IMPUTAR")
 
-        find_and_click(driver, (By.XPATH, "//ng-select[@id='cuenta']//input[@type='text']"))
+        find_and_click(driver, (By.ID, "cuenta"))
         seleccionar_opcion_ng_select_js(driver, "TELEPAGOS")
         print("🔵 SELECCION DE CUENTA A IMPUTAR")
 
         find_and_send_keys(driver, (By.XPATH, "//app-custom-date[@class='ng-untouched ng-pristine ng-valid']//input[@type='text']"), "08052025")
         print("🔵 INGRESO DE FECHA")
 
-        find_and_click(driver, (By.XPATH, "(//input[@type='text'])[29]"))
+        find_and_click(driver, (By.XPATH, "//app-operaciones-imputar//ng-select[@id='operacion']"))
         seleccionar_opcion_ng_select_js(driver, "TRANSFERENCIA RECIBIDA A IMPUTAR")
         print("🔵 SELECCION DE OPERACION DE IMPUTACION")
+
+        find_and_click(driver, (By.XPATH, "//button[normalize-space()='Buscar']"))
+        print("🔵 CLICK EN BUSCAR")
 
         find_and_click(driver, (By.XPATH, "//td[normalize-space()='08/05/2025']"))
         print("🔵 SELECCION DE MOVIMIENTO A IMPUTAR")

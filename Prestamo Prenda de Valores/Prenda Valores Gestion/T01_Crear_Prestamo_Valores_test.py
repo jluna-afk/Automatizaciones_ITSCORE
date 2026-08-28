@@ -30,7 +30,7 @@ class Test_PrendaValores_Gestion(unittest.TestCase):
                     max_valor=22222222222222222222222222222
                 )
 
-    def test_crear_linea_prenda_valores(self):
+    def test_crear_prestamo_prenda_valores(self):
         driver = self.driver
 
         find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")

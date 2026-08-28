@@ -36,15 +36,11 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         find_and_click(driver, (By.LINK_TEXT, "Movimientos"))
         print("🔵 INGRESO A MOVIMIENTOS DE CUENTA A LA VISTA")
 
-        find_and_click(driver, (By.XPATH, "//ng-select[@id='linea']//input[@type='text']"))
-        seleccionar_opcion_ng_select_js(driver, "CUENTAS COMERCIALES")
-        print("🔵 SELECCION DE LINEA")
-
-        find_and_click(driver, (By.XPATH, "(//button[@type='button'])[1]"))
-        print("🔵 CLICK EN LA LUPITA DE BUSQUEDA DE PERSONA")
+        find_and_click(driver, (By.XPATH, "//input[@formcontrolname='numeroCuenta']/following-sibling::button"))
+        print("🔵 CLICK EN LA LUPITA DE BUSCAR CUENTA")
 
         find_and_click(driver, (By.XPATH, "//td[normalize-space()='QUO SOLUCIONES SRL']"))
-        print("🔵 SELECCION DE PERSONA")
+        print("🔵 SELECCION DE CUENTA")
 
         find_and_click(driver, (By.XPATH, "//ng-select[@id='operacion']//input[@type='text']"))
         seleccionar_opcion_ng_select_js(driver, "SOLICITUD PAGO PROVEEDORES")
@@ -67,6 +63,7 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         seleccionar_opcion_ng_select_js(driver, "4 - 431 - BANCO COINAG S.A. - 9137")
         print("🔵 SELECCION CUENTA ORIGEN")
 
+        time.sleep(0.5)
         find_and_click(driver, (By.XPATH, "//ng-select[@id='cuentaDestino']//input[@type='text']"))
         seleccionar_opcion_ng_select_js(driver, "0110444220044401647688")
         print("🔵 SELECCION CUENTA DESTINO")

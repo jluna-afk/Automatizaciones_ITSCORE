@@ -35,15 +35,11 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         find_and_click(driver, (By.LINK_TEXT, "Movimientos"))
         print("🔵 INGRESO A MOVIMIENTOS DE CUENTA A LA VISTA")
 
-        find_and_click(driver, (By.XPATH, "//ng-select[@id='linea']//input[@type='text']"))
-        seleccionar_opcion_ng_select_js(driver, "CUENTAS COMERCIALES")
-        print("🔵 SELECCION DE LINEA CUENTAS COMERCIALES")
-
-        find_and_click(driver, (By.XPATH, "(//button[@type='button'])[1]"))
-        print("🔵 CLICK EN LA LUPITA DE BUSQUEDA DE PERSONA")
+        find_and_click(driver, (By.XPATH, "//input[@formcontrolname='numeroCuenta']/following-sibling::button"))
+        print("🔵 CLICK EN LA LUPITA DE BUSCAR CUENTA")
 
         find_and_click(driver, (By.XPATH, "//td[normalize-space()='QUO SOLUCIONES SRL']"))
-        print("🔵 SELECCION DE PERSONA")
+        print("🔵 SELECCION DE CUENTA")
 
         find_and_click(driver, (By.XPATH, "//ng-select[@id='operacion']//input[@type='text']"))
         seleccionar_opcion_ng_select_js(driver, "SOLICITUD PAGO PROVEEDORES")
@@ -74,10 +70,6 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         find_and_click(driver, (By.LINK_TEXT, "Puesto"))
         print("🔵 INGRESO MODULO CAJA")
 
-        find_and_click(driver, (By.XPATH, "//ng-select[@id='cajaAsignada']//input[@type='text']"))
-        seleccionar_opcion_ng_select_js(driver, "Caja 3")
-        print("🔵 SELECCION DE CAJA")
-
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Iniciar Caja']"))
         print("🔵 CLICK BOTON INICIAR CAJA")
 
@@ -87,7 +79,7 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Aceptar']"))
         print("🔵 CLICK BOTON ACEPTAR")
 
-        time.sleep(1)
+        time.sleep(0.5)
         validar_mensaje_snackbar(driver, "Apertura de caja exitosa")
 
         find_and_click(driver, (By.XPATH, "//a[@title='Pendientes Caja']/i"))
@@ -105,7 +97,7 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ejecutar']"))
         print("🔵 CLICK BOTON EJECUTAR")
 
-        time.sleep(1)        
+        time.sleep(0.5)        
         validar_mensaje_snackbar(driver, "Operaciones ejecutadas exitosamente")
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Cerrar Caja']"))
@@ -114,7 +106,7 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ejecutar']"))
         print("🔵 CLICK BOTON EJECUTAR")
 
-        time.sleep(1)
+        time.sleep(0.5)
         validar_mensaje_snackbar(driver, "Cierre de caja exitoso")
 
     def tearDown(self):

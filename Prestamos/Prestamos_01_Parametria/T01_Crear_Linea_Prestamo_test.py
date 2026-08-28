@@ -14,6 +14,7 @@ from Pages.base_page import (
     find_and_send_keys,
     find_and_click,
     seleccionar_opcion_ng_select_js,
+    Checkbox_Xpath,
     validar_mensaje_snackbar
 )
 
@@ -67,24 +68,23 @@ class Test_Prestamos_Parametria(unittest.TestCase):
         seleccionar_opcion_ng_select_js(driver, "Manual")
         print("🔵 SELECCION METODO")
 
-        find_and_click(driver, (By.XPATH, "//ng-select[@formcontrolname='tipoTasa']//input[@type='text']"))
-        seleccionar_opcion_ng_select_js(driver, "Fija")
-        print("🔵 SELECCION FORMA LIQUIDACION")
-
-        find_and_click(driver, (By.XPATH, "//ng-select[@formcontrolname='tipoIngresos']//input[@type='text']"))
-        seleccionar_opcion_ng_select_js(driver, "Nominal")
-        print("🔵 SELECCION TIPO DE INGRESOS")
-
-        find_and_click(driver, (By.XPATH, "//ng-select[@formcontrolname='claseTasa']//input[@type='text']"))
-        seleccionar_opcion_ng_select_js(driver, "Vencida")
-        print("🔵 SELECCION CLASE DE TASA")
-
-        find_and_click(driver, (By.XPATH, "//ng-select[@formcontrolname='claseTasa']//input[@type='text']"))
-        seleccionar_opcion_ng_select_js(driver, "Vencida")
-        print("🔵 SELECCION CLASE DE TASA")
-
-        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='moduloTasa']"), "1")
+        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='moduloTasa']"), "365")
         print("🔵 INGRESO MODULO DE LA TASA")
+
+        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='tasaMinima']"), "1")
+        print("🔵 INGRESO TASA MINIMA")
+
+        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='tasaMaxima']"), "10")
+        print("🔵 INGRESO TASA MAXIMA")
+
+        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='tasaPunitorio']"), "1")
+        print("🔵 INGRESO TASA PUNITORIO")
+
+        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='diasGraciaCompensacion']"), "1")
+        print("🔵 INGRESO DIAS DE GRACIA COMP")
+
+        Checkbox_Xpath(driver, (By.XPATH, "//label[normalize-space()='Tomar interés liq.']"))
+        print("🔵 CHECKBOX TOMAR INTERES LIQ")
 
         find_and_click(driver, (By.XPATH, "//ng-select[@formcontrolname='unidadAmortizacion']//input[@type='text']"))
         seleccionar_opcion_ng_select_js(driver, "Meses")
@@ -105,6 +105,9 @@ class Test_Prestamos_Parametria(unittest.TestCase):
         seleccionar_opcion_ng_select_js(driver, "igual")
         print("🔵 SELECCION IMPORTE CUOTAS")
 
+        find_and_click(driver, (By.XPATH, "//label[normalize-space()='No calcular comp.']"))
+        print("🔵 CLICK CHECKBOX NO CALCULAR COMPENSACION")
+
         find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='diaPrimerVencimiento']"), "10")
         print("🔵 INGRESO DIA PRIMER VENCIMIENTO")
 
@@ -116,18 +119,6 @@ class Test_Prestamos_Parametria(unittest.TestCase):
 
         find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='periodoDiferimiento']"), "0")
         print("🔵 INGRESO PERIODO DE DIFEREMIENTO")
-
-        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='diasGraciaCompensacion']"), "0")
-        print("🔵 INGRESO DIAS DE GRACIA")
-
-        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='tasaPunitorio']"), "0")
-        print("🔵 INGRESO TASA PUNITORIO")
-
-        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='tasaMinima']"), "1")
-        print("🔵 INGRESO TASA MIN")
-
-        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='tasaMaxima']"), "10")
-        print("🔵 INGRESO TASA MAX")
 
         find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='importeMinimo']"), "1000")
         print("🔵 INGRESO IMPORTE MIN")
@@ -141,14 +132,23 @@ class Test_Prestamos_Parametria(unittest.TestCase):
         find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='cantidadMaximaCuotas']"), "6")
         print("🔵 INGRESO CANTIDAD MAX CUOTAS")
 
+        find_and_click(driver, (By.XPATH, "//label[normalize-space()='Requiere garantía']"))
+        print("🔵 CLICK CHECKBOX REQUIERE GARANTIA")
+
+        find_and_click(driver, (By.XPATH, "//label[normalize-space()='Permite débito automático']"))
+        print("🔵 CLICK CHECKBOX PERMITE DEBITO AUTOMATICO")
+
         find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='plazoDesde']"), "1")
         print("🔵 INGRESO PLAZO DESDE")
 
         find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='plazoHasta']"), "6")
         print("🔵 INGRESO PLAZO HASTA")
 
-        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='tna']"), "5")
-        print("🔵 INGRESO TNA")
+        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='tnaMinima']"), "5")
+        print("🔵 INGRESO TNA MINIMA")
+
+        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='tnaMaxima']"), "6")
+        print("🔵 INGRESO TNA MAXIMA")
 
         find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='gastoFijo']"), "0")
         print("🔵 INGRESO GASTO FIJO")
@@ -174,6 +174,9 @@ class Test_Prestamos_Parametria(unittest.TestCase):
 
         find_and_send_keys(driver, (By.XPATH, "//app-custom-date[@formcontrolname='fechaEstado']//input[@type='text']"), "14122027")
         print("🔵 INGRESO FECHA ESTADO")
+
+        find_and_click(driver, (By.XPATH, "//label[normalize-space()='Asociado Activo']"))
+        print("🔵 CLICK CHECKBOX ASOCIADO ACTIVO")
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Crear']"))
         print("🔵 CLICK EN CREAR")

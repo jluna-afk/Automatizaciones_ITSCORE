@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
@@ -56,6 +57,7 @@ class Test_Prestamos_Parametria(unittest.TestCase):
         find_and_click(driver, (By.LINK_TEXT, "Préstamos"))
         find_and_click(driver, (By.LINK_TEXT, "Parametría"))
         find_and_click(driver, (By.LINK_TEXT, "Líneas"))
+        time.sleep(0.5)
         print("🔵 INGRESO AL MODULO DE PRESTAMOS PARAMETRIA")
 
         find_and_click(driver, (By.XPATH, "//i[@class='fas fa-search']"))
@@ -101,7 +103,7 @@ class Test_Prestamos_Parametria(unittest.TestCase):
             )
             print("✅ EXITO: El importe de gasto fijo se visualiza correctamente tras guardar.")
             
-        except Exception:
+        except (NoSuchElementException, TimeoutException, AssertionError):
             self.fail("❌ ERROR: No se pudo localizar el campo 'gastoFijo' para validar su valor después de guardar.")
 
     def tearDown(self):

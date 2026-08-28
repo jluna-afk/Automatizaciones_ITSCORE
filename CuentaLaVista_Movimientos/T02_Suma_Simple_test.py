@@ -35,15 +35,11 @@ class TestMovimientosCuentaVista(unittest.TestCase):
         find_and_click(driver, (By.LINK_TEXT, "Movimientos"))
         print("🔵 INGRESO AL MODULO DE MOVIMIENTOS DE CUENTA A LA VISTA")
 
-        find_and_click(driver, (By.XPATH, "//ng-select[@id='linea']//input[@type='text']"))
-        seleccionar_opcion_ng_select_js(driver, "CUENTAS CORMECIALES")
-        print("🔵 SELECCION DE LINEA")
-
-        find_and_click(driver, (By.XPATH, "(//button[@type='button'])[1]"))
-        print("🔵 CLICK EN LA LUPITA DE BUSQUEDA DE PERSONA")
+        find_and_click(driver, (By.XPATH, "//input[@formcontrolname='numeroCuenta']/following-sibling::button"))
+        print("🔵 CLICK EN LA LUPITA DE BUSCAR CUENTA")
 
         find_and_click(driver, (By.XPATH, "//td[normalize-space()='QUO SOLUCIONES SRL']"))
-        print("🔵 SELECCION DE PERSONA")
+        print("🔵 SELECCION DE CUENTA")
 
         find_and_click(driver, (By.XPATH, "//ng-select[@id='operacion']//input[@type='text']"))
         seleccionar_opcion_ng_select_js(driver, "ACREDITACION INICIAL")

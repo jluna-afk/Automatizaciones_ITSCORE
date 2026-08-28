@@ -43,13 +43,14 @@ class Test_PlazoFijo_Parametria(unittest.TestCase):
         find_and_send_keys_with_clear(driver, (By.XPATH, "//input[@id='lineas']"), "test crear linea plazo fijo")
         print("🔵 DESPLIEGUE Y BUSQUEDA DE LA LINEA")
 
-        find_and_click_with_scroll(driver, (By.XPATH, "//td[contains(normalize-space(), 'Plazo Fijo - Test Crear Linea Plazo Fijo (12)')]/parent::tr//label"))
+        find_and_click_with_scroll(driver, (By.XPATH, "//td[contains(normalize-space(), 'Plazo Fijo - Test Crear Linea Plazo Fijo')]/parent::tr//label"))
         find_and_click_with_scroll(driver, (By.XPATH, "//button[normalize-space()='Guardar']"))
         print("🔵 CLICK EN EL CHECKBOX Y GUARDADO")
         validar_mensaje_snackbar(driver, "Permisos modificados correctamente")
 
         find_and_click_with_scroll(driver, (By.LINK_TEXT, "Plazo fijo"))
         find_and_click_with_scroll(driver, (By.LINK_TEXT, "Parametría"))
+        time.sleep(0.5)
         print("🔵 INGRESO AL MODULO DE PLAZO FIJO PARAMETRIA")
 
         find_and_click_with_scroll(driver, (By.XPATH, "//i[@class='fas fa-search']"))

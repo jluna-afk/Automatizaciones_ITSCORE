@@ -34,6 +34,8 @@ class TestPersonaGestion(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//a[@href='#/personas/gestion']"))
         print("🔵 INGRESO AL MODULO")
 
+        #Datos Personales
+
         find_and_send_keys(driver, (By.XPATH, "//input[@id='nombre']"), "Jagger")
         find_and_send_keys(driver, (By.XPATH, "//input[@id='apellido']"), "Luna")
         print("🔵 INGRESO DEL NOMBRE")
@@ -60,8 +62,13 @@ class TestPersonaGestion(unittest.TestCase):
         print("🔵 INGRESO NACIONALIDAD")
 
         find_and_send_keys(driver, (By.XPATH, "//input[@id='id_tributario']"), "20777777778")
+        print("🔵 INGRESO CUIT")
+
+        #Domicilios
+
         find_and_send_keys(driver, (By.XPATH, "//input[@id='calle']"), "Juan Manuel de Rosas")
         find_and_send_keys(driver, (By.XPATH, "//input[@id='numero']"), "987")
+        find_and_send_keys(driver, (By.XPATH, "//input[@id='departamento']"), "B")
         print("🔵 INGRESO DOMICILIO")
 
         find_and_send_keys(driver, (By.XPATH, "//ng-select[@id='pais']//input[@type='text']"), "ARGENTINA")
@@ -71,13 +78,18 @@ class TestPersonaGestion(unittest.TestCase):
         find_and_click(driver, (By.CSS_SELECTOR, "ng-select#provincia div[role='combobox']"))
         find_and_send_keys(driver, (By.XPATH, "//div[@aria-expanded='true']//input[@type='text']"), "Santa Fe")
         find_and_click(driver, (By.XPATH, "(//span[normalize-space()='Santa Fe'])[1]"))
-        print("🔵 INGRESO LOCALIDAD")
+        print("🔵 INGRESO PROVINCIA")
 
         find_and_click(driver, (By.CSS_SELECTOR, "ng-select#localidad div[role='combobox']"))
         find_and_send_keys(driver, (By.CSS_SELECTOR, "ng-select#localidad div[role='combobox'] input[type='text']"), "Stephenson")
         time.sleep(1)  
         seleccionar_opcion_ng_select_js(driver, "Stephenson - (2103)")
-        print("🔵 INGRESO CIUDAD")
+        print("🔵 INGRESO LOCALIDAD")
+
+        find_and_send_keys(driver, (By.XPATH, "//input[@id='cpa']"), "a1234bbb")
+        print("🔵 INGRESO CPA")
+
+        #Medios de Comunicacion
 
         find_and_click(driver, (By.XPATH, "(//ng-select[@id='tipo'])[1]//input[@type='text']"))
         seleccionar_opcion_ng_select_js(driver, "Telefono movil")
@@ -90,6 +102,8 @@ class TestPersonaGestion(unittest.TestCase):
         find_and_send_keys(driver, (By.XPATH, "(//input[@id='dato'])[2]"), "jluna@quo.ar")
         print("🔵 INGRESO CORREO ELECTRONICO")
 
+        #CVU / CBU
+
         find_and_send_keys(driver, (By.XPATH, "//input[@id='cbu']"), "0170282040000036262342")
         print("🔵 INGRESO CBU")
         find_and_send_keys(driver, (By.XPATH, "//input[@id='alias']"), "Jagger.luna")
@@ -98,10 +112,12 @@ class TestPersonaGestion(unittest.TestCase):
         seleccionar_opcion_ng_select_js(driver, "Activa")
         print("🔵 INGRESO ESTADO")
 
+        #Legajos
+
         find_and_click(driver, (By.XPATH, "//ng-select[@id='empresa']//input[@type='text']"))
         seleccionar_opcion_ng_select_js(driver, "Activos Provinciales Santa Fe")
         print("🔵 INGRESO ENTIDAD COBRO")
-        find_and_send_keys(driver, (By.XPATH, "//input[@id='identificadorDescuento']"), "123456789")
+        find_and_send_keys(driver, (By.XPATH, "//input[@id='identificadorDescuento']"), "12345678999")
         print("🔵 INGRESO ID DE DESCUENTO")
         find_and_send_keys(driver, (By.XPATH, "//input[@id='sueldo_bruto']"), "1200000")
         find_and_send_keys(driver, (By.XPATH, "//input[@id='sueldo_neto']"), "1000000")
@@ -109,6 +125,8 @@ class TestPersonaGestion(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//ng-select[@id='estado']//div[@class='ng-select-container']//input[@type='text']"))
         seleccionar_opcion_ng_select_js(driver, "Activo")
         print("🔵 INGRESO ESTADO LEGAJO")
+
+        #Actividades
         
         find_and_click(driver, (By.CSS_SELECTOR, "ng-select[id='actividad'] input[type='text']"))
         find_and_send_keys(driver, (By.CSS_SELECTOR, "ng-select[id='actividad'] input[type='text']"), "monotributista")

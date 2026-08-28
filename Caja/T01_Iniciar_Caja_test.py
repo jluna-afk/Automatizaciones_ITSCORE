@@ -12,7 +12,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Pages.base_page import (
     find_and_send_keys,
     find_and_click,
-    seleccionar_opcion_ng_select,
     validar_mensaje_snackbar
 )
 
@@ -34,10 +33,6 @@ class TestAperturaDeCaja(unittest.TestCase):
         find_and_click(driver, (By.LINK_TEXT, "Caja"))
         find_and_click(driver, (By.LINK_TEXT, "Puesto"))
         print("🔵 INGRESO MODULO CAJA")
-
-        find_and_click(driver, (By.XPATH, "//ng-select[@id='cajaAsignada']//input[@type='text']"))
-        seleccionar_opcion_ng_select(driver, "Caja 3")
-        print("🔵 SELECCION DE CAJA")
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Iniciar Caja']"))
         print("🔵 CLICK BOTON INICIAR CAJA")

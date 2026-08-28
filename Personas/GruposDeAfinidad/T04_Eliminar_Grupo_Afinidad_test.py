@@ -28,7 +28,7 @@ def Checkbox_Xpath(driver, xpath, wait_time=10):
         val = WebDriverWait(driver, wait_time).until(EC.element_to_be_clickable(xpath))
         driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", val)
         val.click()
-        print("Click en el elemento {}".format(xpath))
+        print(f"Click en el elemento {xpath}")
         
     except TimeoutException:
         print("No se encontro el Elemento" + str(xpath))
@@ -98,7 +98,9 @@ class TestGrupoAfinidad(unittest.TestCase):
         find_and_click(driver, (By.LINK_TEXT, "Grupos de afinidad"))
         print("🔵 INGRESO AL MODULO")
 
-        time.sleep(0.5)
+        WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.XPATH, "//tr[contains(@class, 'tr-body')]"))
+                )
 
         filas = driver.find_elements(By.XPATH, "//tr[contains(@class, 'tr-body')]")
         encontrado = False

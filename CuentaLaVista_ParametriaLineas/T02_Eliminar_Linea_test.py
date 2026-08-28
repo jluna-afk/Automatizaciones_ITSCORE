@@ -48,9 +48,10 @@ class TestLineasCuentaVista(unittest.TestCase):
         print("🔵 CLICK EN EL CHECKBOX Y GUARDADO")
 
         find_and_click_via_js(driver, (By.LINK_TEXT, "Cuentas a la vista"))
-        find_and_click_via_js(driver, (By.XPATH, "(//span[contains(text(),'Parametría')])[2]"))
+        find_and_click_via_js(driver, (By.LINK_TEXT, "Parametría"))
         find_and_click_via_js(driver, (By.LINK_TEXT, "Líneas"))
         print("🔵 INGRESO A LA PARAMETRIA")
+        time.sleep(1)
 
         find_and_click_via_js(driver, (By.XPATH, "//i[@class='fas fa-search']"))
         print("🔵 CLICK EN LA LUPITA")

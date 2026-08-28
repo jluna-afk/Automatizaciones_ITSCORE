@@ -49,10 +49,10 @@ class TestCrearRelacionUsuario(unittest.TestCase):
         find_and_send_keys(driver, (By.XPATH, "//input[@type='password']"), "1234")
         print("🔵 INGRESO CONTRASEÑA")
 
-        click_con_js(driver, (By.XPATH, "(//span[@class='checkmark'])[3]"))
+        click_con_js(driver, (By.XPATH, "//label[normalize-space()='CASA CENTRAL ITS']/ancestor::div[contains(@class,'row')]//span[contains(@class,'checkmark')]"))
         print("🔵 CLICK CHECK SUCURSAL")
 
-        click_con_js(driver, (By.XPATH, "(//span[@class='checkmark'])[4]"))
+        click_con_js(driver, (By.XPATH, "//label[normalize-space()='Administrador']/ancestor::div[contains(@class,'row')]//span[contains(@class,'checkmark')]"))
         print("🔵 CLICK CHECK GRUPO")
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Crear']"))
