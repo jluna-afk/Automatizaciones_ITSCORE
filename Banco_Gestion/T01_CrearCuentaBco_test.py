@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 import os
 import sys
+import time
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -21,7 +22,7 @@ class TestCrearCuentaBanco(unittest.TestCase):
         self.driver.maximize_window()
         self.driver.get("http://qa.itscore.its.com.ar:3080/#/login")
 
-    def test_crear_cuenta(self):
+    def test_crear_cuenta_banco(self):
         driver = self.driver
 
         find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
@@ -40,6 +41,7 @@ class TestCrearCuentaBanco(unittest.TestCase):
         
         find_and_click(driver, (By.XPATH, "//td[normalize-space()='TELEPAGOS']"))
         print("🔵 SELECCION DE ENTIDAD")
+        time.sleep(0.5)
         
         find_and_click(driver, (By.XPATH, "//ng-select[@formcontrolname='moneda']//input[@type='text']"))
         seleccionar_opcion_ng_select(driver, "Pesos")
@@ -57,7 +59,7 @@ class TestCrearCuentaBanco(unittest.TestCase):
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Crear']"))
         print("🔵 CLICK BOTON CREAR")
 
-        validar_mensaje_snackbar_async_crear(driver, "//button[normalize-space()='Aceptar']", "La cuenta se creó correctamenteeeeee.")
+        validar_mensaje_snackbar_async_crear(driver, "//button[normalize-space()='Aceptar']", "La cuenta se creó correctamente.")
 
     def tearDown(self):
         test_fallo = False

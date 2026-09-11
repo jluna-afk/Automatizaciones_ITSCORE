@@ -6,6 +6,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
@@ -33,9 +35,10 @@ class TestGrupoAfinidad(unittest.TestCase):
         find_and_click_with_scroll(driver, (By.LINK_TEXT, "Personas"))
         find_and_click_with_scroll(driver, (By.LINK_TEXT, "Grupos de afinidad"))
         print("🔵 INGRESO AL MODULO")
-        time.sleep(0.5)
 
-        filas = driver.find_elements(By.XPATH, "//tr[contains(@class, 'tr-body')]")
+        wait = WebDriverWait(driver, 10)
+        filas = wait.until(EC.presence_of_all_elements_located((By.XPATH, "//tr[contains(@class, 'tr-body')]")))
+
         encontrado = False
 
         for fila in filas:

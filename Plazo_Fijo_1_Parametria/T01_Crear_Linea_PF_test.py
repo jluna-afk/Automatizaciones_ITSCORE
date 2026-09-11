@@ -1,12 +1,10 @@
 import os
 import sys
-import time
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.keys import Keys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -45,10 +43,9 @@ class Test_PlazoFijo_Parametria(unittest.TestCase):
         find_and_send_keys(driver, (By.XPATH, "//app-custom-date[@formcontrolname='fechaDesde']//input[@type='text']"), "10112027")
         print("🔵 INGRESO FECHA DESDE")
 
-        input_moneda = find_and_send_keys(driver, (By.XPATH, "//ng-select[@formcontrolname='moneda']//input[@type='text']"), "Pesos")
-        time.sleep(0.5)
-        input_moneda.send_keys(Keys.ENTER)
-        print("🔵 INGRESO MONEDA PESOS")
+        find_and_click(driver, (By.XPATH, "//ng-select[@formcontrolname='moneda']//input[@type='text']"))
+        seleccionar_opcion_ng_select_js(driver, "Pesos")
+        print("🔵 INGRESO MONEDA")
 
         find_and_click(driver, (By.XPATH, "//input[@formcontrolname='renovacionAutomatica']/following-sibling::span"))
         find_and_click(driver, (By.XPATH, "//input[@formcontrolname='actualizaInteresConCadaRenovacion']/following-sibling::span"))

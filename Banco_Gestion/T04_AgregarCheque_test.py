@@ -53,18 +53,11 @@ class TestAgregarCheque(unittest.TestCase):
         input_numero_cheque = (By.XPATH, "//tbody/tr[last()]//input[@id='numero']")
         find_and_send_keys(driver, input_numero_cheque, numero_cheque_unico)
         print("🔵INGRESANDO NUMERO CHEQUE")
-
-        find_and_send_keys(driver, (By.XPATH, "//tbody/tr[last()]/td[2]//input"), "Cheque de prueba")
-        print("🔵INGRESANDO DESCRIPCION")
-
-        find_and_send_keys(driver, (By.XPATH, "//tbody/tr[last()]/td[3]//input"), "Cheque de prueba")
-        print("🔵INGRESANDO CONCEPTO")
         
-        find_and_send_keys(driver, (By.XPATH, "//tbody/tr[last()]/td[4]//app-custom-date//input"), "31/12/2027")
+        find_and_send_keys(driver, (By.XPATH, "//tbody/tr[last()]/td[4]//app-custom-date//input"), "31/12/2030")
         print("🔵INGRESANDO FECHA VENCIMIENTO")
 
-
-        validar_mensaje_snackbar_async_guardar_boton(driver, "//button[@type='submit']", "Chequera actualizada correctamente")
+        validar_mensaje_snackbar_async_guardar_boton(driver, "//div[@class='d-flex justify-content-end mt-4']//button[@type='button'][normalize-space()='Guardar']", "Chequera actualizada correctamente")
 
     def tearDown(self):
         test_fallo = False

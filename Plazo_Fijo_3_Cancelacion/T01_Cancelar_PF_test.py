@@ -10,7 +10,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from Pages.base_page import (
-    find_and_send_keys_clickable,
+    find_and_send_keys,
     find_and_click,
     seleccionar_opcion_ng_select_js,
     copiar_y_pegar_importe_3,
@@ -26,8 +26,8 @@ class Test_PlazoFijo_Cancelacion(unittest.TestCase):
     def test_cancelar_plazo_fijo(self):
         driver = self.driver
 
-        find_and_send_keys_clickable(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
-        find_and_send_keys_clickable(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
+        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Usuario']"), "joaquinluna")
+        find_and_send_keys(driver, (By.XPATH, "//input[@placeholder='Clave']"), "joaquin")
         print("🔵 INGRESO CREDENCIALES")
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Ingresar']"))
         print("🔵 INGRESO A LA PLATAFORMA")
@@ -36,13 +36,10 @@ class Test_PlazoFijo_Cancelacion(unittest.TestCase):
         find_and_click(driver, (By.LINK_TEXT, "Cancelación"))
         print("🔵 INGRESO AL MODULO DE PLAZO FIJO CANCELACION")
 
-        find_and_send_keys_clickable(driver, (By.XPATH, "//input[@formcontrolname='linea']"), "11")
-        print("🔵 INGRESO DE LINEA")
-
         find_and_click(driver, (By.XPATH, "//div[@class='col-md-2']//button[@type='button']"))
         print("🔵 CLICK LUPITA")
 
-        find_and_send_keys_clickable(driver, (By.XPATH, "//input[@formcontrolname='documento']"), "27205799104")
+        find_and_send_keys(driver, (By.XPATH, "//input[@formcontrolname='documento']"), "27205799104")
         print("🔵 INGRESO DNI")    
 
         find_and_click(driver, (By.XPATH, "//button[normalize-space()='Buscar']"))
@@ -60,11 +57,13 @@ class Test_PlazoFijo_Cancelacion(unittest.TestCase):
         print("🔵 CLICK BOTON CONTINUAR")
 
         find_and_click(driver, (By.XPATH, "//ng-select[@formcontrolname='formaPago']"))
+        time.sleep(0.5)
         seleccionar_opcion_ng_select_js(driver, "Cuenta a la vista")
         print("🔵 SELECCION FORMA PAGO CUENTA A LA VISTA")
 
         find_and_click(driver, (By.XPATH, "//ng-select[@formcontrolname='cuentaDestino']"))
-        seleccionar_opcion_ng_select_js(driver, "PROV. INFORMATICA")
+        time.sleep(0.5)
+        seleccionar_opcion_ng_select_js(driver, "PROV. INFORMATICA") 
         print("🔵 SELECCION CUENTA DESTINO")
 
         copiar_y_pegar_importe_3(driver)

@@ -62,6 +62,8 @@ class Test_Prestamos_Gestion(unittest.TestCase):
         find_and_send_keys(driver, (By.XPATH, "//input[@id='cuotas']"), "6")
         print("🔵 INGRESO CUOTAS")
 
+        find_and_send_keys(driver, (By.XPATH, "//input[@id='TN']"), "10")
+
         find_and_click(driver, (By.XPATH, "//div[@class='row mt-4']//i[@class='fas fa-search']"))
         print("🔵 CLICK EN LA LUPITA VENDEDOR")
 

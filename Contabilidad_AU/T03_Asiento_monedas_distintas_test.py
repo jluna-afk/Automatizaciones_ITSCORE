@@ -41,7 +41,7 @@ class TestAsientosAutomaticos(unittest.TestCase):
         seleccionar_opcion_ng_select_with_filter(driver, (By.XPATH, "//ng-select[@formcontrolname='operacion_id']//input[@type='text']"), "DEBITO POR MOVIMIENTO ENTRE CUENTAS")
         print("🔵 SELECCION OPERACION")
 
-        seleccionar_opcion_ng_select_with_filter(driver, (By.XPATH, "//ng-select[@class='form-select ng-select-custom ng-select-searchable ng-select ng-select-single ng-untouched ng-pristine ng-invalid']//input[@type='text']"), "1 BANCO BBVA ARGENTINA S.A.")
+        seleccionar_opcion_ng_select_with_filter(driver, (By.XPATH, "//ng-select[@formcontrolname='linea_id']//input[@type='text']"), "1 BANCO BBVA ARGENTINA S.A.")
         print("🔵 SELECCION LINEA")
 
         find_and_send_keys(driver, (By.XPATH, "//input[@class='form-control form-control-sm text-left pl-2']"), "21082025")
