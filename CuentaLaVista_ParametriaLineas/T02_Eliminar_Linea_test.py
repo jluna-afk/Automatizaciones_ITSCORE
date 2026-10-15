@@ -71,7 +71,7 @@ class TestLineasCuentaVista(unittest.TestCase):
         boton_eliminar_final = (By.XPATH, "//app-dialog-simple//button[contains(text(), 'Eliminar')]")
         find_and_click_via_js(driver, boton_eliminar_final)
 
-        validar_mensaje_snackbar(driver, "Línea eliminada exitosamente")
+        validar_mensaje_snackbar(driver, "Campaña eliminada correctamente.")
 
     def tearDown(self):
         test_fallo = False
